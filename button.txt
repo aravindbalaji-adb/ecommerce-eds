@@ -33,6 +33,24 @@ Examples to author as formatted links:
   *[:search: primary icon-only Search](https://www.adobe.com/)*
   *[:cart: primary full-width Continue shopping](https://www.adobe.com/)*
 
+ICON RULES
+----------
+
+1. Put exactly one icon token at the beginning of the link text:
+     :cart: success outlined sm Add to cart
+2. The icon name must match an SVG filename in /icons, without the .svg
+   extension. Current examples include cart, favorite, user, and search.
+3. Keep the icon, options, and label inside the same hyperlink. Format the
+   entire hyperlink as italic or bold so EDS decorates it as a button.
+4. Write color, variant, size, and layout options as plain words separated by
+   spaces. Do not wrap them in colons; :outlined: and :sm: are interpreted as
+   icon names.
+5. The icon appears before the label. Button icon size, spacing, and color
+   treatment are styled by .button .icon in blocks/button/button.css.
+6. For icon-only buttons, add icon-only and keep a descriptive label after it.
+   The label is visually hidden but remains available to screen readers:
+     :search: primary icon-only Search
+
 SUPPORTED TOKENS
 ----------------
 
