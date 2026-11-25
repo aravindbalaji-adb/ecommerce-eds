@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Interactive preview of the design system button colors, variants, sizes, and states.">
+    <meta name="description" content="Preview the design system button colors, variants, sizes, icons, and states.">
     <title>Button System Preview</title>
     <link rel="stylesheet" href="/styles/fonts.css">
     <link rel="stylesheet" href="/styles/styles.css">
@@ -121,7 +121,7 @@
       <section class="button-showcase-intro" aria-labelledby="page-title">
         <div>
           <h1 id="page-title">Button system</h1>
-          <p>Color, Material variant, size, and disabled-state preview.</p>
+          <p>Color, variant, size, icon placement, and disabled-state preview.</p>
         </div>
         <button id="theme-toggle" class="button secondary outlined sm" type="button" aria-pressed="false">
           Switch to dark theme
@@ -129,8 +129,18 @@
       </section>
 
       <section class="button-showcase-section" aria-labelledby="matrix-title">
-        <h2 id="matrix-title">Color × variant × size</h2>
+        <h2 id="matrix-title">Color × variant × size · icon + label</h2>
         <div id="button-matrix" class="button-showcase-grid"></div>
+      </section>
+
+      <section class="button-showcase-section" aria-labelledby="icon-only-title">
+        <h2 id="icon-only-title">Icon only · color × variant × size</h2>
+        <div id="icon-only-matrix" class="button-showcase-grid"></div>
+      </section>
+
+      <section class="button-showcase-section" aria-labelledby="icon-placement-title">
+        <h2 id="icon-placement-title">Icon placement</h2>
+        <div id="icon-placement" class="button-showcase-controls"></div>
       </section>
 
       <section class="button-showcase-section" aria-labelledby="disabled-title">
@@ -157,20 +167,49 @@
         { label: 'Default', className: '' },
       ];
 
-      function createButton(color, variant, size, disabled) {
+      const matrix = document.querySelector('#button-matrix');
+      const iconOnlyMatrix = document.querySelector('#icon-only-matrix');
+      const iconPlacement = document.querySelector('#icon-placement');
+      const disabledMatrix = document.querySelector('#disabled-matrix');
+
+      function createSearchIcon() {
+        const icon = document.createElement('span');
+        icon.className = 'icon icon-search';
+        icon.setAttribute('aria-hidden', 'true');
+
+        const image = document.createElement('img');
+        image.src = '/icons/search.svg';
+        image.alt = '';
+        image.width = 24;
+        image.height = 24;
+        icon.append(image);
+        return icon;
+      }
+
+      function createButton(color, variant, size, disabled, iconOnly = false, iconPosition = 'start') {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = `button ${color.className} ${variant.className} ${size.className}`.trim();
-        button.textContent = disabled ? 'Unavailable' : 'Shop now';
-        button.setAttribute(
-          'aria-label',
-          `${color.label} ${variant.label} ${size.label || 'default'}${disabled ? ', disabled' : ''}`,
-        );
+        button.className = `button ${color.className} ${variant.className} ${size.className}${iconOnly ? ' icon-only' : ''}`.trim();
+        const text = disabled ? 'Unavailable' : 'Shop now';
+        if (iconOnly) {
+          button.setAttribute(
+            'aria-label',
+            `Search products, ${color.label} ${variant.label} ${size.label || 'default'}${disabled ? ', disabled' : ''}`,
+          );
+        }
         button.disabled = disabled;
+
+        const icon = createSearchIcon();
+        if (iconPosition === 'end' && !iconOnly) {
+          button.append(text, icon);
+        } else {
+          button.append(icon);
+          if (!iconOnly) button.append(text);
+        }
         return button;
       }
 
-      function createCard(color, disabled) {
+      function createCard(color, disabled, iconOnly = false) {
         const card = document.createElement('section');
         card.className = 'button-showcase-card';
 
@@ -190,7 +229,7 @@
           const controls = document.createElement('div');
           controls.className = 'button-showcase-controls';
           (disabled ? [{ label: 'MD', className: 'md' }] : sizes).forEach((size) => {
-            controls.append(createButton(color, variant, size, disabled));
+            controls.append(createButton(color, variant, size, disabled, iconOnly));
           });
           row.append(controls);
           card.append(row);
@@ -199,12 +238,17 @@
         return card;
       }
 
-      const matrix = document.querySelector('#button-matrix');
-      const disabledMatrix = document.querySelector('#disabled-matrix');
       colors.forEach((color) => {
         matrix.append(createCard(color, false));
+        iconOnlyMatrix.append(createCard(color, false, true));
         disabledMatrix.append(createCard(color, true));
       });
+
+      const placementSize = { label: 'MD', className: 'md' };
+      iconPlacement.append(
+        createButton(colors[0], variants[0], placementSize, false, false, 'start'),
+        createButton(colors[0], variants[0], placementSize, false, false, 'end'),
+      );
 
       const themeToggle = document.querySelector('#theme-toggle');
       themeToggle.addEventListener('click', () => {
