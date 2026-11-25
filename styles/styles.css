@@ -16,7 +16,9 @@
 @import url("../design-system/base/shadows.css");
 @import url("../design-system/base/typography.css");
 @import url("../design-system/tokens/button.css");
+@import url("../design-system/tokens/form-control.css");
 @import url("../design-system/components/buttons.css");
+@import url("../design-system/components/form-controls.css");
 
 body {
   display: none;
@@ -119,13 +121,13 @@ button {
 }
 
 /* links */
-a:any-link {
+a:any-link:not(.button) {
   color: var(--color-action);
   text-decoration: none;
   overflow-wrap: break-word;
 }
 
-a:hover {
+a:hover:not(.button) {
   color: var(--color-action-hover);
   text-decoration: underline;
 }

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Interactive preview of the design system input and select sizes.">
+    <title>Form Controls Preview</title>
+    <link rel="stylesheet" href="/styles/fonts.css">
+    <link rel="stylesheet" href="/styles/styles.css">
+    <style>
+      .form-showcase {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+      }
+
+      .form-showcase-intro,
+      .form-showcase-card {
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-lg);
+        background: var(--color-surface);
+        box-shadow: var(--shadow-sm, 0 1px 2px rgb(21 37 44 / 8%));
+      }
+
+      .form-showcase-intro {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+      }
+
+      .form-showcase h1,
+      .form-showcase h2,
+      .form-showcase h3 {
+        margin-top: 0;
+        color: var(--color-text);
+      }
+
+      .form-showcase h1 {
+        margin-bottom: 0.5rem;
+        font-size: clamp(1.75rem, 3vw, 2.5rem);
+      }
+
+      .form-showcase h2 {
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+      }
+
+      .form-showcase h3 {
+        margin-bottom: 1rem;
+        font-size: 1.125rem;
+      }
+
+      .form-showcase p {
+        margin: 0;
+        color: var(--color-text-muted);
+      }
+
+      .form-showcase-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 1rem;
+      }
+
+      .form-showcase-section + .form-showcase-section {
+        margin-top: 2rem;
+      }
+
+      .form-showcase-card {
+        padding: 1.25rem;
+      }
+
+      .form-showcase-field {
+        margin-top: 1rem;
+      }
+
+      .form-showcase-field label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--color-text);
+        font-size: 0.875rem;
+        font-weight: 600;
+      }
+
+      .form-showcase-field p {
+        margin-top: 0.5rem;
+        font-size: 0.8125rem;
+      }
+
+      .form-showcase-size {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        color: var(--color-text-muted);
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      @media (width <= 520px) {
+        .form-showcase {
+          padding: 1rem 0.75rem 2rem;
+        }
+
+        .form-showcase-intro {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="appear">
+    <main class="form-showcase">
+      <section class="form-showcase-intro" aria-labelledby="page-title">
+        <div>
+          <h1 id="page-title">Form controls</h1>
+          <p>Outlined inputs and selects in small, medium, and large sizes.</p>
+        </div>
+        <button id="theme-toggle" class="button secondary outlined sm" type="button" aria-pressed="false">
+          Switch to dark theme
+        </button>
+      </section>
+
+      <section class="form-showcase-section" aria-labelledby="input-title">
+        <h2 id="input-title">Input</h2>
+        <div class="form-showcase-grid">
+          <article class="form-showcase-card">
+            <h3>Small</h3>
+            <span class="form-showcase-size">SM · 36px</span>
+            <div class="form-showcase-field">
+              <label for="product-search-sm">Search products</label>
+              <input id="product-search-sm" class="input sm" type="search" placeholder="Headphones, laptops...">
+              <p>Find products by name or keyword.</p>
+            </div>
+          </article>
+          <article class="form-showcase-card">
+            <h3>Medium</h3>
+            <span class="form-showcase-size">MD · 44px</span>
+            <div class="form-showcase-field">
+              <label for="email-md">Email address</label>
+              <input id="email-md" class="input md" type="email" placeholder="you@example.com">
+              <p>Standard form size.</p>
+            </div>
+          </article>
+          <article class="form-showcase-card">
+            <h3>Large</h3>
+            <span class="form-showcase-size">LG · 52px</span>
+            <div class="form-showcase-field">
+              <label for="account-lg">Account name</label>
+              <input id="account-lg" class="input lg" type="text" placeholder="Your name">
+              <p>Use for prominent or touch-focused fields.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="form-showcase-section" aria-labelledby="select-title">
+        <h2 id="select-title">Select</h2>
+        <div class="form-showcase-grid">
+          <article class="form-showcase-card">
+            <h3>Small</h3>
+            <span class="form-showcase-size">SM · 36px</span>
+            <div class="form-showcase-field">
+              <label for="category-sm">Category</label>
+              <select id="category-sm" class="select sm">
+                <option value="">Choose a category</option>
+                <option>Electronics</option>
+                <option>Accessories</option>
+                <option>Home and living</option>
+              </select>
+            </div>
+          </article>
+          <article class="form-showcase-card">
+            <h3>Medium</h3>
+            <span class="form-showcase-size">MD · 44px</span>
+            <div class="form-showcase-field">
+              <label for="delivery-md">Delivery option</label>
+              <select id="delivery-md" class="select md">
+                <option value="">Choose delivery</option>
+                <option>Standard delivery</option>
+                <option>Express delivery</option>
+                <option>Pickup in store</option>
+              </select>
+            </div>
+          </article>
+          <article class="form-showcase-card">
+            <h3>Large</h3>
+            <span class="form-showcase-size">LG · 52px</span>
+            <div class="form-showcase-field">
+              <label for="region-lg">Region</label>
+              <select id="region-lg" class="select lg">
+                <option value="">Select your region</option>
+                <option>North</option>
+                <option>South</option>
+                <option>West</option>
+              </select>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+    <script nonce="aem">
+      const themeToggle = document.querySelector('#theme-toggle');
+      themeToggle.addEventListener('click', () => {
+        const isDark = document.documentElement.dataset.theme !== 'dark';
+        if (isDark) {
+          document.documentElement.dataset.theme = 'dark';
+        } else {
+          delete document.documentElement.dataset.theme;
+        }
+        themeToggle.setAttribute('aria-pressed', String(isDark));
+        themeToggle.textContent = isDark ? 'Switch to light theme' : 'Switch to dark theme';
+      });
+    </script>
+  </body>
+</html>

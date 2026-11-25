@@ -1,0 +1,16 @@
+:root {
+  --field-height-sm: 2.25rem;
+  --field-height-md: 2.75rem;
+  --field-height-lg: 3.25rem;
+  --field-padding-x-sm: var(--space-3);
+  --field-padding-x-md: var(--space-3);
+  --field-padding-x-lg: var(--space-4);
+  --field-font-size-sm: 0.8125rem;
+  --field-font-size-md: 0.875rem;
+  --field-font-size-lg: 1rem;
+  --field-border-radius: var(--radius-sm);
+  --field-border-color: var(--color-border);
+  --field-background: var(--color-surface);
+  --field-text: var(--color-text);
+  --field-placeholder: var(--color-text-muted);
+}
