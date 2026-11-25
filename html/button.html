@@ -139,12 +139,27 @@
       </section>
 
       <section class="button-showcase-section" aria-labelledby="icon-placement-title">
-        <h2 id="icon-placement-title">Icon placement</h2>
+        <h2 id="icon-placement-title">Icon placement and icon-only disabled state</h2>
         <div id="icon-placement" class="button-showcase-controls"></div>
       </section>
 
+      <section class="button-showcase-section" aria-labelledby="author-markup-title">
+        <h2 id="author-markup-title">Authored icon button</h2>
+        <div class="button-showcase-card">
+          <p class="button-wrapper">
+            <a class="button secondary" href="https://www.adobe.com/" title="Secondary Button">
+              <span class="icon icon-cart" aria-hidden="true">
+                <img data-icon-name="cart" src="/icons/cart.svg" alt="" loading="lazy" width="16" height="16">
+              </span>
+              Secondary Button
+            </a>
+          </p>
+          <p><code>*[:cart:Secondary Button](https://www.adobe.com/)*</code></p>
+        </div>
+      </section>
+
       <section class="button-showcase-section" aria-labelledby="disabled-title">
-        <h2 id="disabled-title">Disabled state (default md size)</h2>
+        <h2 id="disabled-title">Disabled state · color × variant × size</h2>
         <div id="disabled-matrix" class="button-showcase-grid"></div>
       </section>
     </main>
@@ -154,11 +169,13 @@
         { label: 'Primary', className: 'primary' },
         { label: 'Secondary', className: 'secondary' },
         { label: 'Success', className: 'success' },
+        { label: 'Accent', className: 'accent' },
       ];
       const variants = [
         { label: 'Contained', className: 'contained' },
         { label: 'Outlined', className: 'outlined' },
         { label: 'Text', className: 'text' },
+        { label: 'Tertiary', className: 'tertiary' },
       ];
       const sizes = [
         { label: 'SM', className: 'sm' },
@@ -228,7 +245,7 @@
 
           const controls = document.createElement('div');
           controls.className = 'button-showcase-controls';
-          (disabled ? [{ label: 'MD', className: 'md' }] : sizes).forEach((size) => {
+          sizes.forEach((size) => {
             controls.append(createButton(color, variant, size, disabled, iconOnly));
           });
           row.append(controls);
@@ -248,6 +265,7 @@
       iconPlacement.append(
         createButton(colors[0], variants[0], placementSize, false, false, 'start'),
         createButton(colors[0], variants[0], placementSize, false, false, 'end'),
+        createButton(colors[0], variants[0], placementSize, true, true),
       );
 
       const themeToggle = document.querySelector('#theme-toggle');

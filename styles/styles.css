@@ -17,7 +17,7 @@
 @import url("../design-system/base/typography.css");
 @import url("../design-system/tokens/button.css");
 @import url("../design-system/tokens/form-control.css");
-@import url("../design-system/components/buttons.css");
+@import url("../blocks/button/button.css");
 @import url("../design-system/components/form-controls.css");
 
 body {

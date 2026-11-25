@@ -104,17 +104,76 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * Extracts icon, color, variant, and size tokens authored at the start of a button link.
+ * @param {HTMLAnchorElement} link The authored link
+ * @returns {{ classes: string[] }}
+ */
+function getButtonOptions(link) {
+  const colorClasses = ['primary', 'secondary', 'success', 'accent'];
+  const variantClasses = ['contained', 'outlined', 'text', 'tertiary'];
+  const sizeClasses = ['sm', 'md', 'lg', 'small', 'large'];
+  const modifierClasses = ['full-width', 'icon-only'];
+  const textNode = [...link.childNodes].find(
+    (node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim(),
+  );
+  if (!textNode) return { classes: [] };
+
+  const iconMatch = /^(\s*):([a-z0-9-]+):/i.exec(textNode.textContent);
+  const hasIcon = !!iconMatch || !!link.querySelector('span.icon');
+  if (iconMatch) {
+    const icon = document.createElement('span');
+    icon.classList.add('icon', `icon-${iconMatch[2].toLowerCase()}`);
+    icon.setAttribute('aria-hidden', 'true');
+    link.insertBefore(icon, textNode);
+    textNode.textContent = textNode.textContent.slice(iconMatch[0].length);
+    decorateIcons(link);
+  }
+  if (!hasIcon) return { classes: [] };
+
+  const options = {};
+  const modifiers = [];
+  let text = textNode.textContent.trimStart();
+  let tokenMatch = /^([a-z][a-z0-9-]*)(?::|\s+)/i.exec(text);
+  while (tokenMatch) {
+    const token = tokenMatch[1].toLowerCase();
+    if (colorClasses.includes(token)) options.color = token;
+    else if (variantClasses.includes(token)) options.variant = token;
+    else if (sizeClasses.includes(token)) options.size = token;
+    else if (modifierClasses.includes(token)) modifiers.push(token);
+    else break;
+
+    text = text.slice(tokenMatch[0].length);
+    tokenMatch = /^([a-z][a-z0-9-]*)(?::|\s+)/i.exec(text);
+  }
+  textNode.textContent = text.trimStart();
+  if (modifiers.includes('icon-only')) {
+    const label = document.createElement('span');
+    label.className = 'button-label';
+    label.textContent = textNode.textContent.trim();
+    textNode.replaceWith(label);
+  }
+
+  return {
+    classes: [
+      options.color,
+      options.variant,
+      options.size,
+      ...modifiers,
+    ].filter(Boolean),
+  };
+}
+
+/**
  * Decorates formatted links to style them as buttons.
  * @param {HTMLElement} main The main container element
  */
 function decorateButtons(main) {
   main.querySelectorAll('p a[href]').forEach((a) => {
-    a.title = a.title || a.textContent;
     const p = a.closest('p');
     const text = a.textContent.trim();
 
     // quick structural checks
-    if (a.querySelector('img') || p.textContent.trim() !== text) return;
+    if (a.querySelector('img:not([data-icon-name])') || p.textContent.trim() !== text) return;
 
     // skip URL display links
     try {
@@ -126,6 +185,8 @@ function decorateButtons(main) {
     const em = a.closest('em');
     if (!strong && !em) return;
 
+    const options = getButtonOptions(a);
+    a.title = a.title || a.textContent.trim();
     p.className = 'button-wrapper';
     a.className = 'button';
     if (strong && em) { // high-impact call-to-action
@@ -138,6 +199,12 @@ function decorateButtons(main) {
     } else {
       a.classList.add('secondary');
       em.replaceWith(a);
+    }
+    if (options.classes.length) {
+      if (options.classes.some((className) => ['primary', 'secondary', 'success', 'accent'].includes(className))) {
+        a.classList.remove('primary', 'secondary', 'success', 'accent');
+      }
+      options.classes.forEach((className) => a.classList.add(className));
     }
   });
 }

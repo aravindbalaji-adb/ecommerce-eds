@@ -1,0 +1,59 @@
+EDS BUTTON AUTHORING
+====================
+
+Button links are created from formatted links in a paragraph. Link styling is
+decorated by scripts/scripts.js, and button styling comes from
+blocks/button/button.css. The button stylesheet is imported by styles/styles.css.
+
+1. Create a link in Document Authoring (DA).
+2. Format the link text:
+   - Italic: secondary button by default.
+   - Bold: primary button by default.
+   - Bold and italic: accent button by default.
+3. Optionally add an icon and button options at the beginning of the link text.
+
+AUTHORING SYNTAX
+----------------
+
+Put an icon token first. The icon name must match an SVG in /icons.
+Add optional color, variant, size, and layout tokens after the icon.
+Separate tokens with colons or spaces, then add the visible button label.
+
+Syntax:
+  :icon:color:variant:size label
+
+Examples to author as formatted links:
+
+  *[:favorite:primary Shop favorites](https://www.adobe.com/)*
+  *[:user:secondary Account](https://www.adobe.com/)*
+  *[:cart:success Add to cart](https://www.adobe.com/)*
+  *[:cart:success:outlined:sm Add to cart](https://www.adobe.com/)*
+  *[:cart:secondary:contained:lg View cart](https://www.adobe.com/)*
+  *[:search:primary:icon-only Search](https://www.adobe.com/)*
+  *[:cart:primary:full-width Continue shopping](https://www.adobe.com/)*
+
+SUPPORTED TOKENS
+----------------
+
+Colors:
+  primary, secondary, success, accent
+
+Variants:
+  contained, outlined, text, tertiary
+
+Sizes:
+  sm, md, lg
+  small and large are aliases for sm and lg.
+  If no size is provided, the button uses md.
+
+Layout:
+  full-width stretches the button to the available width.
+  icon-only hides the visible label but keeps it available to screen readers.
+  Always include a label after icon-only.
+
+Icons and options can be combined in any order after the icon token. For
+example, :cart:success:outlined:sm Add to cart creates a small, outlined,
+success-colored button with a cart icon.
+
+The preview page is html/button.html. It shows color, variant, size,
+icon-placement, icon-only, and disabled combinations.
