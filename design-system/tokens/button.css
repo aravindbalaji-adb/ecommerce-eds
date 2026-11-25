@@ -1,0 +1,19 @@
+:root {
+  --button-height: 2.75rem;
+  --button-height-sm: 2.25rem;
+  --button-height-md: var(--button-height);
+  --button-height-lg: 3.25rem;
+  --button-padding-x: var(--space-5);
+  --button-padding-x-sm: var(--space-3);
+  --button-padding-x-md: var(--button-padding-x);
+  --button-padding-x-lg: var(--space-6);
+  --button-padding-y-sm: var(--space-1);
+  --button-padding-y-md: var(--space-2);
+  --button-padding-y-lg: var(--space-3);
+  --button-font-size: 0.875rem;
+  --button-font-size-sm: 0.8125rem;
+  --button-font-size-md: var(--button-font-size);
+  --button-font-size-lg: 1rem;
+  --button-font-weight: var(--font-weight-semibold, 600);
+  --button-border-radius: var(--radius-sm);
+}

@@ -1,0 +1,77 @@
+:root {
+  color-scheme: light;
+
+  --color-brand-50: #e6f7ef;
+  --color-brand-100: #c2ecd8;
+  --color-brand-500: #00a86b;
+  --color-brand-600: #008557;
+  --color-brand-700: #006b46;
+  --color-primary: #1976d2;
+  --color-primary-hover: #1565c0;
+  --color-primary-active: #0d47a1;
+  --color-primary-subtle: #e3f2fd;
+  --color-primary-text: #fff;
+  --color-neutral-0: #fff;
+  --color-neutral-50: #f5f8fa;
+  --color-neutral-100: #e9eff2;
+  --color-neutral-200: #d7e1e5;
+  --color-neutral-500: #657780;
+  --color-neutral-700: #34464e;
+  --color-neutral-900: #15252c;
+  --color-success: #087c50;
+  --color-success-hover: #006b46;
+  --color-danger: #c43232;
+  --color-danger-hover: #a82424;
+  --color-focus: #1769aa;
+  --color-background: var(--color-neutral-50);
+  --color-surface: var(--color-neutral-0);
+  --color-surface-raised: var(--color-neutral-0);
+  --color-text: var(--color-neutral-900);
+  --color-text-muted: var(--color-neutral-500);
+  --color-border: var(--color-neutral-200);
+  --color-action: var(--color-brand-600);
+  --color-action-hover: var(--color-brand-700);
+  --color-action-text: var(--color-neutral-0);
+  --color-disabled-background: var(--color-neutral-100);
+  --color-disabled-text: var(--color-neutral-500);
+  
+  
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-brand-50: #10291f;
+  --color-brand-100: #174331;
+  --color-brand-500: #20d18a;
+  --color-brand-600: #20d18a;
+  --color-brand-700: #42e3a1;
+  --color-primary: #64b5f6;
+  --color-primary-hover: #90caf9;
+  --color-primary-active: #42a5f5;
+  --color-primary-subtle: #102a43;
+  --color-primary-text: #071218;
+  --color-neutral-0: #071218;
+  --color-neutral-50: #0b171d;
+  --color-neutral-100: #17272e;
+  --color-neutral-200: #30434b;
+  --color-neutral-500: #a4b5ba;
+  --color-neutral-700: #d1dcdf;
+  --color-neutral-900: #f2f7f6;
+  --color-success: #42e3a1;
+  --color-success-hover: #20d18a;
+  --color-danger: #f77;
+  --color-danger-hover: #ff9797;
+  --color-focus: #75baff;
+  --color-background: var(--color-neutral-50);
+  --color-surface: #102027;
+  --color-surface-raised: #142831;
+  --color-text: var(--color-neutral-900);
+  --color-text-muted: var(--color-neutral-500);
+  --color-border: var(--color-neutral-200);
+  --color-action: var(--color-brand-500);
+  --color-action-hover: var(--color-brand-700);
+  --color-action-text: #062218;
+  --color-disabled-background: #22343b;
+  --color-disabled-text: #91a2a8;
+}
