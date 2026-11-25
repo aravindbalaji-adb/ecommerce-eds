@@ -229,6 +229,10 @@ header nav .nav-sections .nav-drop > button[aria-expanded='false'] + ul {
     margin: 0;
   }
 
+  .default-content-wrapper{
+    background-color:aqua
+  }
+
   header nav .nav-sections .default-content-wrapper > ul > li {
     flex: 0 1 auto;
     position: relative;
