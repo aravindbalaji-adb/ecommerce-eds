@@ -133,7 +133,7 @@ function getButtonOptions(link) {
   const options = {};
   const modifiers = [];
   let text = textNode.textContent.trimStart();
-  let tokenMatch = /^([a-z][a-z0-9-]*)(?::|\s+)/i.exec(text);
+  let tokenMatch = /^([a-z][a-z0-9-]*)\s+/i.exec(text);
   while (tokenMatch) {
     const token = tokenMatch[1].toLowerCase();
     if (colorClasses.includes(token)) options.color = token;
@@ -143,7 +143,7 @@ function getButtonOptions(link) {
     else break;
 
     text = text.slice(tokenMatch[0].length);
-    tokenMatch = /^([a-z][a-z0-9-]*)(?::|\s+)/i.exec(text);
+    tokenMatch = /^([a-z][a-z0-9-]*)\s+/i.exec(text);
   }
   textNode.textContent = text.trimStart();
   if (modifiers.includes('icon-only')) {

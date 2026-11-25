@@ -17,20 +17,21 @@ AUTHORING SYNTAX
 
 Put an icon token first. The icon name must match an SVG in /icons.
 Add optional color, variant, size, and layout tokens after the icon.
-Separate tokens with colons or spaces, then add the visible button label.
+Separate options with spaces, then add the visible button label. Only the icon
+name is wrapped in colons; tokens such as outlined and sm are not icons.
 
 Syntax:
-  :icon:color:variant:size label
+  :icon: color variant size label
 
 Examples to author as formatted links:
 
-  *[:favorite:primary Shop favorites](https://www.adobe.com/)*
-  *[:user:secondary Account](https://www.adobe.com/)*
-  *[:cart:success Add to cart](https://www.adobe.com/)*
-  *[:cart:success:outlined:sm Add to cart](https://www.adobe.com/)*
-  *[:cart:secondary:contained:lg View cart](https://www.adobe.com/)*
-  *[:search:primary:icon-only Search](https://www.adobe.com/)*
-  *[:cart:primary:full-width Continue shopping](https://www.adobe.com/)*
+  *[:favorite: primary Shop favorites](https://www.adobe.com/)*
+  *[:user: secondary Account](https://www.adobe.com/)*
+  *[:cart: success Add to cart](https://www.adobe.com/)*
+  *[:cart: success outlined sm Add to cart](https://www.adobe.com/)*
+  *[:cart: secondary contained lg View cart](https://www.adobe.com/)*
+  *[:search: primary icon-only Search](https://www.adobe.com/)*
+  *[:cart: primary full-width Continue shopping](https://www.adobe.com/)*
 
 SUPPORTED TOKENS
 ----------------
@@ -51,9 +52,21 @@ Layout:
   icon-only hides the visible label but keeps it available to screen readers.
   Always include a label after icon-only.
 
-Icons and options can be combined in any order after the icon token. For
-example, :cart:success:outlined:sm Add to cart creates a small, outlined,
-success-colored button with a cart icon.
+The entire icon, options, and label must be part of the same hyperlink, and the
+entire link must be italicized or bolded. For example, the authored link
+*[:cart: success outlined sm Add to cart](https://www.adobe.com/)* creates a
+small, outlined, success-colored button with a cart icon.
+
+TROUBLESHOOTING
+---------------
+
+In the page's .plain.html output, verify one <a> contains both the icon span
+and the label. If the link closes after <span class="icon icon-cart"></span>
+and success or outlined appears outside the link, only the icon was linked.
+Select the complete text and icon together when adding the hyperlink.
+
+Do not write :outlined: or :sm:. Colon-wrapped words are treated as icon names.
+Use :cart: success outlined sm Add to cart instead.
 
 The preview page is html/button.html. It shows color, variant, size,
 icon-placement, icon-only, and disabled combinations.
