@@ -70,12 +70,18 @@ Layout:
   icon-only hides the visible label but keeps it available to screen readers.
   Always include a label after icon-only.
 
-ALL COLOR × VARIANT × SIZE COMBINATIONS
----------------------------------------
+ICON BUTTONS: ALL COLOR × VARIANT × SIZE COMBINATIONS
+-----------------------------------------------------
 
-Each line below is the complete link text to author. Create one link from the
-whole line and italicize or bold the whole link. Change "Button" to the desired
+Every line below includes a leading cart icon. Create one link from the whole
+line and italicize or bold the whole link. Change "Button" to the desired
 label. Replace cart with any available icon name.
+
+Your example:
+  :cart: primary outlined sm Add to cart
+
+This becomes a link with the classes button primary outlined sm and a cart
+icon before the visible label.
 
 PRIMARY
   :cart: primary contained sm Button
