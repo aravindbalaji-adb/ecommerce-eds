@@ -133,9 +133,18 @@ TROUBLESHOOTING
 ---------------
 
 In the page's .plain.html output, verify one <a> contains both the icon span
-and the label. If the link closes after <span class="icon icon-cart"></span>
-and success or outlined appears outside the link, only the icon was linked.
-Select the complete text and icon together when adding the hyperlink.
+and the label, and that the link is inside <em> or <strong>. For example, this
+is not a button:
+
+  <p><span class="icon icon-cart"></span>success outlined lg Button</p>
+
+It has no hyperlink or formatting, so EDS does not decorate it. The plain
+markup should instead look like this:
+
+  <p><em><a href="/target"><span class="icon icon-cart"></span>success outlined lg Button</a></em></p>
+
+Select the complete text and icon together when adding the hyperlink, then
+italicize or bold the complete link.
 
 Do not write :outlined: or :sm:. Colon-wrapped words are treated as icon names.
 Use :cart: success outlined sm Add to cart instead.
