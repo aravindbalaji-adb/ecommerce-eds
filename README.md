@@ -32,3 +32,25 @@ npm run lint
 1. Install the [AEM CLI](https://github.com/adobe/helix-cli): `npm install -g @adobe/aem-cli`
 1. Start AEM Proxy: `aem up` (opens your browser at `http://localhost:3000`)
 1. Open the `ecommerce-eds` directory in your favorite IDE and start coding :)
+
+
+design-system/
+├── tokens/          → colors, typography, spacing, radius
+├── components/      → buttons, forms, links
+└── utilities/       → reusable layout/helper classes
+
+
+── design-system/
+│   ├── tokens/
+│   │   ├── colors.css
+│   │   ├── typography.css
+│   │   ├── spacing.css
+│   │   ├── radius.css
+│   │   └── shadows.css
+│   ├── components/
+│   │   ├── buttons.css
+│   │   ├── forms.css
+│   │   └── links.css
+│   └── utilities/
+│       ├── layout.css
+│       └── utilities.css
