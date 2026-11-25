@@ -52,10 +52,82 @@ Layout:
   icon-only hides the visible label but keeps it available to screen readers.
   Always include a label after icon-only.
 
-The entire icon, options, and label must be part of the same hyperlink, and the
-entire link must be italicized or bolded. For example, the authored link
-*[:cart: success outlined sm Add to cart](https://www.adobe.com/)* creates a
-small, outlined, success-colored button with a cart icon.
+ALL COLOR × VARIANT × SIZE COMBINATIONS
+---------------------------------------
+
+Each line below is the complete link text to author. Create one link from the
+whole line and italicize or bold the whole link. Change "Button" to the desired
+label. Replace cart with any available icon name.
+
+PRIMARY
+  :cart: primary contained sm Button
+  :cart: primary contained md Button
+  :cart: primary contained lg Button
+  :cart: primary outlined sm Button
+  :cart: primary outlined md Button
+  :cart: primary outlined lg Button
+  :cart: primary text sm Button
+  :cart: primary text md Button
+  :cart: primary text lg Button
+  :cart: primary tertiary sm Button
+  :cart: primary tertiary md Button
+  :cart: primary tertiary lg Button
+
+SECONDARY
+  :cart: secondary contained sm Button
+  :cart: secondary contained md Button
+  :cart: secondary contained lg Button
+  :cart: secondary outlined sm Button
+  :cart: secondary outlined md Button
+  :cart: secondary outlined lg Button
+  :cart: secondary text sm Button
+  :cart: secondary text md Button
+  :cart: secondary text lg Button
+  :cart: secondary tertiary sm Button
+  :cart: secondary tertiary md Button
+  :cart: secondary tertiary lg Button
+
+SUCCESS
+  :cart: success contained sm Button
+  :cart: success contained md Button
+  :cart: success contained lg Button
+  :cart: success outlined sm Button
+  :cart: success outlined md Button
+  :cart: success outlined lg Button
+  :cart: success text sm Button
+  :cart: success text md Button
+  :cart: success text lg Button
+  :cart: success tertiary sm Button
+  :cart: success tertiary md Button
+  :cart: success tertiary lg Button
+
+ACCENT
+  :cart: accent contained sm Button
+  :cart: accent contained md Button
+  :cart: accent contained lg Button
+  :cart: accent outlined sm Button
+  :cart: accent outlined md Button
+  :cart: accent outlined lg Button
+  :cart: accent text sm Button
+  :cart: accent text md Button
+  :cart: accent text lg Button
+  :cart: accent tertiary sm Button
+  :cart: accent tertiary md Button
+  :cart: accent tertiary lg Button
+
+ADDITIONAL OPTIONS
+------------------
+
+  :cart: primary full-width Continue shopping
+  :search: primary icon-only Search
+
+The icon, options, and label must remain inside the same hyperlink. For
+example, :cart: success outlined sm Add to cart creates a small, outlined,
+success-colored button with a cart icon. Italic formatting makes it secondary
+by default; the explicit success token overrides that default.
+
+Omitting the size uses md. To use a different icon, replace the leading cart
+token with an existing icon name, such as :favorite:, :user:, or :search:.
 
 TROUBLESHOOTING
 ---------------
