@@ -1,71 +1,37 @@
-body {
-  font-family: var(--font-family, "Inter", Arial, sans-serif);
-  font-size: var(--body1-size, 1rem);
-  font-weight: var(--font-weight-regular, 400);
-  line-height: var(--line-height-base, 1.5);
+
+:root {
+ 
+
+  /* body sizes */
+  --body-font-size-m: 22px;
+  --body-font-size-s: 19px;
+  --body-font-size-xs: 17px;
+
+  /* heading sizes */
+  --heading-font-size-xxl: 55px;
+  --heading-font-size-xl: 44px;
+  --heading-font-size-l: 34px;
+  --heading-font-size-m: 27px;
+  --heading-font-size-s: 24px;
+  --heading-font-size-xs: 22px;
+
+  /* nav height */
+  --nav-height: 64px;
 }
 
-h1 {
-  font-size: var(--h1-size, clamp(3rem, 6vw, 6rem));
-  line-height: var(--h1-line-height, 1.167);
-  font-weight: var(--h1-weight, 300);
-}
+@media (width >=900px) {
+  :root {
+    /* body sizes */
+    --body-font-size-m: 18px;
+    --body-font-size-s: 16px;
+    --body-font-size-xs: 14px;
 
-h2 {
-  font-size: var(--h2-size, clamp(2.5rem, 4vw, 3.75rem));
-  line-height: var(--h2-line-height, 1.2);
-  font-weight: var(--h2-weight, 300);
-}
-
-h3 {
-  font-size: var(--h3-size, clamp(2rem, 3vw, 3rem));
-  line-height: var(--h3-line-height, 1.167);
-  font-weight: var(--h3-weight, 400);
-}
-
-h4 {
-  font-size: var(--h4-size, clamp(1.75rem, 2.5vw, 2.125rem));
-  line-height: var(--h4-line-height, 1.235);
-  font-weight: var(--h4-weight, 400);
-}
-
-h5 {
-  font-size: var(--h5-size, clamp(1.25rem, 2vw, 1.5rem));
-  line-height: var(--h5-line-height, 1.334);
-  font-weight: var(--h5-weight, 400);
-}
-
-h6 {
-  font-size: var(--h6-size, clamp(1rem, 1.5vw, 1.125rem));
-  line-height: var(--h6-line-height, 1.6);
-  font-weight: var(--h6-weight, 600);
-}
-
-.body1 {
-  font-size: var(--body1-size, 1rem);
-  line-height: var(--body1-line-height, 1.5);
-}
-
-.body2 {
-  font-size: var(--body2-size, 0.875rem);
-  line-height: var(--body2-line-height, 1.43);
-}
-
-.subtitle1 {
-  font-size: var(--subtitle1-size, 1rem);
-  line-height: var(--subtitle1-line-height, 1.75);
-}
-
-.subtitle2 {
-  font-size: var(--subtitle2-size, 0.875rem);
-  line-height: var(--subtitle2-line-height, 1.57);
-}
-
-.caption {
-  font-size: var(--caption-size, 0.75rem);
-}
-
-.overline {
-  font-size: var(--overline-size, 0.625rem);
-  text-transform: uppercase;
+    /* heading sizes */
+    --heading-font-size-xxl: 45px;
+    --heading-font-size-xl: 36px;
+    --heading-font-size-l: 28px;
+    --heading-font-size-m: 22px;
+    --heading-font-size-s: 20px;
+    --heading-font-size-xs: 18px;
+  }
 }

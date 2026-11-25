@@ -1,6 +1,6 @@
 /* header and nav layout */
 header .nav-wrapper {
-  background-color: var(--background-color);
+  background-color: var(--color-background);
   width: 100%;
   z-index: 2;
   position: fixed;
@@ -18,7 +18,6 @@ header nav {
   max-width: 1248px;
   height: var(--nav-height);
   padding: 0 24px;
-  font-family: var(--body-font-family);
 }
 
 header nav[aria-expanded='true'] {
@@ -67,7 +66,7 @@ header nav .nav-hamburger button {
   border: 0;
   border-radius: 0;
   padding: 0;
-  background-color: var(--background-color);
+  background-color: var(--color-background);
   color: inherit;
   overflow: initial;
   text-overflow: initial;
@@ -228,10 +227,7 @@ header nav .nav-sections .nav-drop > button[aria-expanded='false'] + ul {
     gap: 24px;
     margin: 0;
   }
-
-  .default-content-wrapper{
-    background-color:aqua
-  }
+  
 
   header nav .nav-sections .default-content-wrapper > ul > li {
     flex: 0 1 auto;
@@ -250,7 +246,7 @@ header nav .nav-sections .nav-drop > button[aria-expanded='false'] + ul {
     width: 200px;
     top: 150%;
     padding: 16px;
-    background-color: var(--light-color);
+    background-color: var(--color-surface);
     white-space: initial;
   }
 
@@ -263,7 +259,7 @@ header nav .nav-sections .nav-drop > button[aria-expanded='false'] + ul {
     height: 0;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
-    border-bottom: 8px solid var(--light-color);
+    border-bottom: 8px solid var(--color-surface);
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li > ul > li {
