@@ -1,115 +1,205 @@
-let carouselId = 0;
+const CAROUSEL_KEY = {
+  PREVIOUS: 'ArrowLeft',
+  NEXT: 'ArrowRight',
+  FIRST: 'Home',
+  LAST: 'End',
+};
 
-const FOCUSABLE_ELEMENTS = [
-  'a[href]',
-  'button:not([disabled])',
-  'input:not([disabled])',
-  'select:not([disabled])',
-  'textarea:not([disabled])',
-  '[tabindex]',
-].join(',');
+function createNavigationIcon(direction) {
+  const namespace = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(namespace, 'svg');
+  const path = document.createElementNS(namespace, 'path');
 
-/**
- * Carousel accessibility labels.
- * Kept in this file so no placeholders.js dependency is required.
- */
-async function fetchPlaceholders() {
-  return {
-    carousel: 'Carousel',
-    carouselLabel: 'Featured promotions',
-    carouselSlideControls: 'Carousel slide controls',
-    slide: 'Slide',
-    previousSlide: 'Previous slide',
-    nextSlide: 'Next slide',
-    showSlide: 'Show slide',
-    of: 'of',
-  };
-}
+  svg.classList.add('carousel-navigation-icon');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
 
-/**
- * Returns true when the user prefers reduced animation.
- */
-function prefersReducedMotion() {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
-/**
- * Updates keyboard accessibility for elements inside a slide.
- */
-function updateFocusableElements(slide, isActive) {
-  slide.querySelectorAll(FOCUSABLE_ELEMENTS).forEach((element) => {
-    if (!isActive) {
-      if (
-        element.hasAttribute('tabindex')
-        && element.getAttribute('tabindex') !== '-1'
-      ) {
-        element.dataset.originalTabindex = element.getAttribute('tabindex');
-      }
-
-      element.setAttribute('tabindex', '-1');
-    } else if (element.dataset.originalTabindex !== undefined) {
-      element.setAttribute(
-        'tabindex',
-        element.dataset.originalTabindex,
-      );
-
-      delete element.dataset.originalTabindex;
-    } else {
-      element.removeAttribute('tabindex');
-    }
-  });
-}
-
-/**
- * Updates active slide accessibility state.
- */
-function updateActiveSlide(slide, announce = true) {
-  const block = slide.closest('.carousel');
-
-  if (!block) return;
-
-  const slideIndex = Number.parseInt(
-    slide.dataset.slideIndex,
-    10,
+  path.setAttribute(
+    'd',
+    direction === 'previous'
+      ? 'M15 18 9 12l6-6'
+      : 'm9 18 6-6-6-6',
   );
 
-  const slides = [
-    ...block.querySelectorAll('.carousel-slide'),
-  ];
+  svg.append(path);
 
-  const indicators = [
-    ...block.querySelectorAll('.carousel-slide-indicator'),
-  ];
+  return svg;
+}
 
-  if (Number.isNaN(slideIndex)) return;
+function createNavigationButton(direction, label) {
+  const button = document.createElement('button');
 
-  block.dataset.activeSlide = String(slideIndex);
+  button.type = 'button';
+  button.className = `carousel-navigation-button slide-${direction}`;
+  button.setAttribute('aria-label', label);
 
-  slides.forEach((currentSlide, index) => {
-    const isActive = index === slideIndex;
+  button.append(createNavigationIcon(direction));
 
-    currentSlide.setAttribute(
+  return button;
+}
+
+function getSlideLabel(slide, index) {
+  const heading = slide.querySelector('h1, h2, h3, h4, h5, h6');
+
+  if (heading?.textContent.trim()) {
+    return heading.textContent.trim();
+  }
+
+  const image = slide.querySelector('img');
+
+  if (image?.alt.trim()) {
+    return image.alt.trim();
+  }
+
+  return `Slide ${index + 1}`;
+}
+
+function prepareSlide(row, index, carouselId) {
+  const slide = document.createElement('li');
+  const columns = [...row.children];
+
+  const picture = row.querySelector('picture');
+
+  const imageColumn = picture?.closest(':scope > div')
+    || picture?.parentElement;
+
+  slide.className = 'carousel-slide';
+  slide.id = `${carouselId}-slide-${index + 1}`;
+
+  slide.setAttribute('role', 'group');
+  slide.setAttribute('aria-roledescription', 'slide');
+
+  /*
+   * Image
+   */
+  if (picture) {
+    const imageWrapper = document.createElement('div');
+    const image = picture.querySelector('img');
+
+    imageWrapper.className = 'carousel-slide-image';
+
+    if (image) {
+      image.loading = index === 0 ? 'eager' : 'lazy';
+      image.decoding = 'async';
+
+      if (index === 0) {
+        image.fetchPriority = 'high';
+      }
+    }
+
+    imageWrapper.append(picture);
+    slide.append(imageWrapper);
+  }
+
+  /*
+   * Optional slide content
+   */
+  const contentColumns = columns.filter(
+    (column) => column !== imageColumn,
+  );
+
+  const hasContent = contentColumns.some(
+    (column) => column.textContent.trim() || column.children.length,
+  );
+
+  if (hasContent) {
+    const content = document.createElement('div');
+
+    content.className = 'carousel-slide-content';
+
+    const alignment = row.dataset.align
+      || imageColumn?.nextElementSibling?.dataset.align
+      || '';
+
+    if (
+      ['left', 'center', 'right', 'justify'].includes(alignment)
+    ) {
+      content.dataset.align = alignment;
+    }
+
+    contentColumns.forEach((column) => {
+      while (column.firstChild) {
+        content.append(column.firstChild);
+      }
+    });
+
+    slide.append(content);
+  }
+
+  const label = getSlideLabel(slide, index);
+
+  slide.setAttribute('aria-label', label);
+
+  return slide;
+}
+
+function createIndicator(slide, index) {
+  const item = document.createElement('li');
+  const button = document.createElement('button');
+
+  const slideLabel = slide.getAttribute('aria-label');
+
+  item.className = 'carousel-slide-indicator';
+
+  button.type = 'button';
+
+  button.setAttribute(
+    'aria-label',
+    `Show slide ${index + 1}: ${slideLabel}`,
+  );
+
+  button.setAttribute(
+    'aria-controls',
+    slide.id,
+  );
+
+  button.dataset.slideIndex = index;
+
+  item.append(button);
+
+  return item;
+}
+
+function getNearestSlideIndex(slidesContainer, slides) {
+  const containerLeft = slidesContainer
+    .getBoundingClientRect()
+    .left;
+
+  return slides.reduce((nearestIndex, slide, index) => {
+    const currentDistance = Math.abs(
+      slide.getBoundingClientRect().left - containerLeft,
+    );
+
+    const nearestDistance = Math.abs(
+      slides[nearestIndex].getBoundingClientRect().left
+        - containerLeft,
+    );
+
+    return currentDistance < nearestDistance
+      ? index
+      : nearestIndex;
+  }, 0);
+}
+
+function setActiveSlide({
+  activeIndex,
+  slides,
+  indicators,
+  status,
+}) {
+  slides.forEach((slide, index) => {
+    const isActive = index === activeIndex;
+
+    slide.setAttribute(
       'aria-hidden',
       String(!isActive),
-    );
-
-    currentSlide.toggleAttribute(
-      'inert',
-      !isActive,
-    );
-
-    updateFocusableElements(
-      currentSlide,
-      isActive,
     );
   });
 
   indicators.forEach((indicator, index) => {
     const button = indicator.querySelector('button');
-
-    if (!button) return;
-
-    const isActive = index === slideIndex;
+    const isActive = index === activeIndex;
 
     if (isActive) {
       button.setAttribute(
@@ -121,626 +211,134 @@ function updateActiveSlide(slide, announce = true) {
         'aria-current',
       );
     }
-
-    button.classList.toggle(
-      'is-active',
-      isActive,
-    );
   });
 
-  if (announce) {
-    const status = block.querySelector(
-      '.carousel-status',
-    );
-
-    if (status) {
-      status.textContent = `Slide ${slideIndex + 1} of ${slides.length}`;
-    }
-  }
+  status.textContent = `Slide ${activeIndex + 1} of ${slides.length}`;
 }
 
-/**
- * Shows requested carousel slide.
- */
-function showSlide(
-  block,
-  requestedIndex = 0,
-  options = {},
+function scrollToSlide(
+  slidesContainer,
+  slides,
+  index,
 ) {
-  const {
-    announce = true,
-    focusIndicator = false,
-  } = options;
+  const normalizedIndex = (
+    (index % slides.length) + slides.length
+  ) % slides.length;
 
-  const slides = [
-    ...block.querySelectorAll('.carousel-slide'),
-  ];
+  const prefersReducedMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches;
 
-  if (!slides.length) return;
-
-  let slideIndex = requestedIndex;
-
-  if (slideIndex < 0) {
-    slideIndex = slides.length - 1;
-  }
-
-  if (slideIndex >= slides.length) {
-    slideIndex = 0;
-  }
-
-  const activeSlide = slides[slideIndex];
-
-  const slidesWrapper = block.querySelector(
-    '.carousel-slides',
-  );
-
-  if (!activeSlide || !slidesWrapper) return;
-
-  updateActiveSlide(
-    activeSlide,
-    announce,
-  );
-
-  slidesWrapper.scrollTo({
-    top: 0,
-    left: activeSlide.offsetLeft,
-    behavior: prefersReducedMotion()
+  slidesContainer.scrollTo({
+    left: slides[normalizedIndex].offsetLeft,
+    behavior: prefersReducedMotion
       ? 'auto'
       : 'smooth',
   });
+}
 
-  if (focusIndicator) {
-    const indicatorButton = block.querySelector(
-      `.carousel-slide-indicator[data-target-slide="${slideIndex}"] button`,
-    );
+/**
+ * Decorates the Carousel block.
+ *
+ * Expected DA structure:
+ *
+ * Carousel
+ * ---------------------------------
+ * Image | Optional Content
+ * Image | Optional Content
+ * Image | Optional Content
+ *
+ * @param {HTMLElement} block Carousel block
+ */
+export default function decorate(block) {
+  const rows = [...block.children];
 
-    indicatorButton?.focus();
+  if (!rows.length) {
+    return;
   }
-}
-
-/**
- * Keyboard navigation for carousel indicators.
- */
-function handleIndicatorKeydown(event, block) {
-  const supportedKeys = [
-    'ArrowLeft',
-    'ArrowRight',
-    'Home',
-    'End',
-  ];
-
-  if (!supportedKeys.includes(event.key)) return;
-
-  const indicatorButtons = [
-    ...block.querySelectorAll(
-      '.carousel-slide-indicator button',
-    ),
-  ];
-
-  const currentIndex = indicatorButtons.indexOf(
-    event.currentTarget,
-  );
-
-  if (currentIndex < 0) return;
-
-  event.preventDefault();
-
-  let targetIndex = currentIndex;
-
-  switch (event.key) {
-    case 'ArrowLeft':
-      targetIndex = (
-        currentIndex
-        - 1
-        + indicatorButtons.length
-      ) % indicatorButtons.length;
-      break;
-
-    case 'ArrowRight':
-      targetIndex = (
-        currentIndex + 1
-      ) % indicatorButtons.length;
-      break;
-
-    case 'Home':
-      targetIndex = 0;
-      break;
-
-    case 'End':
-      targetIndex = indicatorButtons.length - 1;
-      break;
-
-    default:
-      return;
-  }
-
-  showSlide(
-    block,
-    targetIndex,
-    {
-      announce: true,
-      focusIndicator: true,
-    },
-  );
-}
-
-/**
- * Binds carousel interactions.
- */
-function bindEvents(block) {
-  const slideIndicators = block.querySelector(
-    '.carousel-slide-indicators',
-  );
-
-  if (!slideIndicators) return;
-
-  slideIndicators
-    .querySelectorAll('button')
-    .forEach((button) => {
-      button.addEventListener(
-        'click',
-        (event) => {
-          const indicator = event.currentTarget.closest(
-            '.carousel-slide-indicator',
-          );
-
-          if (!indicator) return;
-
-          const targetSlide = Number.parseInt(
-            indicator.dataset.targetSlide,
-            10,
-          );
-
-          showSlide(
-            block,
-            targetSlide,
-          );
-        },
-      );
-
-      button.addEventListener(
-        'keydown',
-        (event) => {
-          handleIndicatorKeydown(
-            event,
-            block,
-          );
-        },
-      );
-    });
-
-  const previousButton = block.querySelector(
-    '.slide-prev',
-  );
-
-  const nextButton = block.querySelector(
-    '.slide-next',
-  );
-
-  previousButton?.addEventListener(
-    'click',
-    () => {
-      const activeSlide = Number.parseInt(
-        block.dataset.activeSlide || '0',
-        10,
-      );
-
-      showSlide(
-        block,
-        activeSlide - 1,
-      );
-    },
-  );
-
-  nextButton?.addEventListener(
-    'click',
-    () => {
-      const activeSlide = Number.parseInt(
-        block.dataset.activeSlide || '0',
-        10,
-      );
-
-      showSlide(
-        block,
-        activeSlide + 1,
-      );
-    },
-  );
-
-  /**
-   * Keeps active slide synchronized when
-   * users manually swipe or scroll.
-   */
-  const slidesWrapper = block.querySelector(
-    '.carousel-slides',
-  );
-
-  const slideObserver = new IntersectionObserver(
-    (entries) => {
-      const visibleEntry = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort(
-          (firstEntry, secondEntry) => (
-            secondEntry.intersectionRatio
-            - firstEntry.intersectionRatio
-          ),
-        )[0];
-
-      if (visibleEntry) {
-        updateActiveSlide(
-          visibleEntry.target,
-          false,
-        );
-      }
-    },
-    {
-      root: slidesWrapper,
-      threshold: 0.6,
-    },
-  );
-
-  block
-    .querySelectorAll('.carousel-slide')
-    .forEach((slide) => {
-      slideObserver.observe(slide);
-    });
-}
-
-/**
- * Creates one accessible carousel slide.
- */
-function createSlide(
-  row,
-  slideIndex,
-  currentCarouselId,
-  totalSlides,
-  placeholders,
-) {
-  const slide = document.createElement('li');
-
-  const slideId = (
-    `carousel-${currentCarouselId}-slide-${slideIndex + 1}`
-  );
-
-  slide.id = slideId;
-
-  slide.dataset.slideIndex = String(
-    slideIndex,
-  );
-
-  slide.classList.add(
-    'carousel-slide',
-  );
-
-  slide.setAttribute(
-    'role',
-    'group',
-  );
-
-  slide.setAttribute(
-    'aria-roledescription',
-    placeholders.slide || 'Slide',
-  );
-
-  row
-    .querySelectorAll(':scope > div')
-    .forEach((column, columnIndex) => {
-      column.classList.add(
-        `carousel-slide-${
-          columnIndex === 0
-            ? 'image'
-            : 'content'
-        }`,
-      );
-
-      slide.append(column);
-    });
-
-  const heading = slide.querySelector(
-    'h1, h2, h3, h4, h5, h6',
-  );
-
-  if (heading) {
-    if (!heading.id) {
-      heading.id = `${slideId}-heading`;
-    }
-
-    slide.setAttribute(
-      'aria-labelledby',
-      heading.id,
-    );
-  } else {
-    slide.setAttribute(
-      'aria-label',
-      `${placeholders.slide || 'Slide'} `
-      + `${slideIndex + 1} `
-      + `${placeholders.of || 'of'} `
-      + `${totalSlides}`,
-    );
-  }
-
-  slide
-    .querySelectorAll('img')
-    .forEach((image) => {
-      if (!image.hasAttribute('alt')) {
-        image.setAttribute(
-          'alt',
-          '',
-        );
-      }
-
-      image.setAttribute(
-        'loading',
-        slideIndex === 0
-          ? 'eager'
-          : 'lazy',
-      );
-    });
-
-  return slide;
-}
-
-/**
- * AEM EDS Carousel decorate function.
- */
-export default async function decorate(block) {
-  carouselId += 1;
-
-  const currentCarouselId = carouselId;
-
-  const blockId = (
-    `carousel-${currentCarouselId}`
-  );
-
-  const rows = [
-    ...block.querySelectorAll(':scope > div'),
-  ];
-
-  if (!rows.length) return;
-
-  const isSingleSlide = rows.length < 2;
-
-  const placeholders = await fetchPlaceholders();
-
-  block.id = blockId;
-
-  block.dataset.activeSlide = '0';
 
   /*
-   * Accessible carousel region.
+   * Generate unique carousel ID.
    */
-  block.setAttribute(
-    'role',
-    'region',
-  );
+  const carouselId = `carousel-${crypto.randomUUID()}`;
 
-  block.setAttribute(
-    'aria-roledescription',
-    placeholders.carousel || 'Carousel',
-  );
+  const regionLabel =
+    block.dataset.label
+    || 'Featured promotions';
 
-  block.setAttribute(
+  /*
+   * Main carousel container
+   */
+  const carouselContainer =
+    document.createElement('div');
+
+  carouselContainer.className =
+    'carousel-slides-container';
+
+  /*
+   * Scrollable slides container
+   */
+  const slidesContainer =
+    document.createElement('div');
+
+  slidesContainer.className =
+    'carousel-slides';
+
+  slidesContainer.id =
+    `${carouselId}-slides`;
+
+  slidesContainer.tabIndex = 0;
+
+  slidesContainer.setAttribute(
     'aria-label',
-    placeholders.carouselLabel
-      || 'Featured promotions',
+    `${regionLabel} slides`,
   );
 
   /*
-   * Carousel container.
+   * Semantic slide list
    */
-  const container = document.createElement(
-    'div',
-  );
+  const slidesList =
+    document.createElement('ul');
 
-  container.classList.add(
-    'carousel-slides-container',
+  slidesList.className =
+    'carousel-slides-list';
+
+  slidesList.setAttribute(
+    'role',
+    'list',
   );
 
   /*
-   * Slides list.
+   * Slide indicators
    */
-  const slidesWrapper = document.createElement(
-    'ul',
+  const indicatorsList =
+    document.createElement('ol');
+
+  indicatorsList.className =
+    'carousel-slide-indicators';
+
+  indicatorsList.setAttribute(
+    'aria-label',
+    'Choose a slide',
   );
-
-  slidesWrapper.classList.add(
-    'carousel-slides',
-  );
-
-  slidesWrapper.id = `${blockId}-slides`;
-
-  let slideIndicators;
 
   /*
-   * Navigation controls are only required
-   * when more than one slide exists.
+   * Navigation container
    */
-  if (!isSingleSlide) {
-    const previousLabel = (
-      placeholders.previousSlide
-      || 'Previous slide'
-    );
+  const navigation =
+    document.createElement('div');
 
-    const nextLabel = (
-      placeholders.nextSlide
-      || 'Next slide'
-    );
-
-    /*
-     * Previous / Next buttons.
-     */
-    const navigationButtons = document.createElement(
-      'div',
-    );
-
-    navigationButtons.classList.add(
-      'carousel-navigation-buttons',
-    );
-
-    const previousButton = document.createElement(
-      'button',
-    );
-
-    previousButton.type = 'button';
-
-    previousButton.classList.add(
-      'slide-prev',
-    );
-
-    previousButton.setAttribute(
-      'aria-label',
-      previousLabel,
-    );
-
-    previousButton.setAttribute(
-      'aria-controls',
-      slidesWrapper.id,
-    );
-
-    const nextButton = document.createElement(
-      'button',
-    );
-
-    nextButton.type = 'button';
-
-    nextButton.classList.add(
-      'slide-next',
-    );
-
-    nextButton.setAttribute(
-      'aria-label',
-      nextLabel,
-    );
-
-    nextButton.setAttribute(
-      'aria-controls',
-      slidesWrapper.id,
-    );
-
-    navigationButtons.append(
-      previousButton,
-      nextButton,
-    );
-
-    container.append(
-      navigationButtons,
-    );
-
-    /*
-     * Slide indicators.
-     */
-    const slideIndicatorsNav = document.createElement(
-      'nav',
-    );
-
-    slideIndicatorsNav.classList.add(
-      'carousel-slide-controls',
-    );
-
-    slideIndicatorsNav.setAttribute(
-      'aria-label',
-      placeholders.carouselSlideControls
-        || 'Carousel slide controls',
-    );
-
-    slideIndicators = document.createElement(
-      'ol',
-    );
-
-    slideIndicators.classList.add(
-      'carousel-slide-indicators',
-    );
-
-    slideIndicatorsNav.append(
-      slideIndicators,
-    );
-
-    block.append(
-      slideIndicatorsNav,
-    );
-  }
+  navigation.className =
+    'carousel-navigation-buttons';
 
   /*
-   * Convert authored rows into slides.
+   * Screen-reader status
    */
-  rows.forEach((row, index) => {
-    const slide = createSlide(
-      row,
-      index,
-      currentCarouselId,
-      rows.length,
-      placeholders,
-    );
+  const status =
+    document.createElement('p');
 
-    slidesWrapper.append(
-      slide,
-    );
-
-    /*
-     * Create slide indicator button.
-     */
-    if (slideIndicators) {
-      const indicator = document.createElement(
-        'li',
-      );
-
-      indicator.classList.add(
-        'carousel-slide-indicator',
-      );
-
-      indicator.dataset.targetSlide = String(
-        index,
-      );
-
-      const indicatorButton = document.createElement(
-        'button',
-      );
-
-      indicatorButton.type = 'button';
-
-      indicatorButton.setAttribute(
-        'aria-label',
-        `${placeholders.showSlide || 'Show slide'} `
-        + `${index + 1} `
-        + `${placeholders.of || 'of'} `
-        + `${rows.length}`,
-      );
-
-      indicatorButton.setAttribute(
-        'aria-controls',
-        slide.id,
-      );
-
-      if (index === 0) {
-        indicatorButton.setAttribute(
-          'aria-current',
-          'true',
-        );
-      }
-
-      indicator.append(
-        indicatorButton,
-      );
-
-      slideIndicators.append(
-        indicator,
-      );
-    }
-
-    row.remove();
-  });
-
-  /*
-   * Screen reader live region.
-   */
-  const status = document.createElement(
-    'p',
-  );
-
-  status.classList.add(
-    'carousel-status',
-    'visually-hidden',
-  );
+  status.className =
+    'carousel-status';
 
   status.setAttribute(
     'aria-live',
@@ -753,51 +351,306 @@ export default async function decorate(block) {
   );
 
   /*
-   * Add generated carousel to block.
+   * Carousel accessibility
    */
-  container.append(
-    slidesWrapper,
+  block.setAttribute(
+    'role',
+    'region',
   );
 
-  block.prepend(
-    container,
+  block.setAttribute(
+    'aria-roledescription',
+    'carousel',
   );
 
-  block.append(
+  block.setAttribute(
+    'aria-label',
+    regionLabel,
+  );
+
+  /*
+   * Build slides
+   */
+  const slides = rows.map(
+    (row, index) => prepareSlide(
+      row,
+      index,
+      carouselId,
+    ),
+  );
+
+  slides.forEach((slide, index) => {
+    const originalLabel =
+      slide.getAttribute('aria-label');
+
+    slide.setAttribute(
+      'aria-label',
+      `${index + 1} of ${slides.length}: ${originalLabel}`,
+    );
+
+    slidesList.append(slide);
+  });
+
+  slidesContainer.append(slidesList);
+
+  /*
+   * Build slide indicators
+   */
+  const indicators = slides.map(
+    (slide, index) => {
+      const indicator =
+        createIndicator(
+          slide,
+          index,
+        );
+
+      indicatorsList.append(indicator);
+
+      return indicator;
+    },
+  );
+
+  /*
+   * Navigation buttons
+   */
+  const previousButton =
+    createNavigationButton(
+      'previous',
+      'Show previous slide',
+    );
+
+  const nextButton =
+    createNavigationButton(
+      'next',
+      'Show next slide',
+    );
+
+  navigation.append(
+    previousButton,
+    nextButton,
+  );
+
+  carouselContainer.append(
+    slidesContainer,
+  );
+
+  /*
+   * Hide navigation if only one slide exists.
+   */
+  if (slides.length > 1) {
+    carouselContainer.append(
+      navigation,
+    );
+  }
+
+  /*
+   * Replace original EDS block content.
+   */
+  block.replaceChildren(
+    carouselContainer,
+    indicatorsList,
     status,
   );
 
   /*
-   * Set initial accessibility state.
+   * Single-slide carousel
    */
-  const slides = block.querySelectorAll(
-    '.carousel-slide',
-  );
+  if (slides.length === 1) {
+    indicatorsList.hidden = true;
 
-  slides.forEach((slide, index) => {
-    const isActive = index === 0;
+    setActiveSlide({
+      activeIndex: 0,
+      slides,
+      indicators,
+      status,
+    });
 
-    slide.setAttribute(
-      'aria-hidden',
-      String(!isActive),
-    );
+    return;
+  }
 
-    slide.toggleAttribute(
-      'inert',
-      !isActive,
-    );
-
-    updateFocusableElements(
-      slide,
-      isActive,
-    );
-  });
+  let activeIndex = 0;
+  let scrollFrame;
 
   /*
-   * Bind controls only when multiple
-   * slides are present.
+   * Update current slide state.
    */
-  if (!isSingleSlide) {
-    bindEvents(block);
-  }
+  const updateActiveSlide = (index) => {
+    activeIndex = index;
+
+    setActiveSlide({
+      activeIndex,
+      slides,
+      indicators,
+      status,
+    });
+  };
+
+  /*
+   * Navigate to slide.
+   */
+  const goToSlide = (index) => {
+    const normalizedIndex = (
+      (index % slides.length)
+      + slides.length
+    ) % slides.length;
+
+    updateActiveSlide(
+      normalizedIndex,
+    );
+
+    scrollToSlide(
+      slidesContainer,
+      slides,
+      normalizedIndex,
+    );
+  };
+
+  /*
+   * Previous arrow
+   */
+  previousButton.addEventListener(
+    'click',
+    () => {
+      goToSlide(
+        activeIndex - 1,
+      );
+    },
+  );
+
+  /*
+   * Next arrow
+   */
+  nextButton.addEventListener(
+    'click',
+    () => {
+      goToSlide(
+        activeIndex + 1,
+      );
+    },
+  );
+
+  /*
+   * Indicator navigation
+   */
+  indicators.forEach(
+    (indicator, index) => {
+      const button =
+        indicator.querySelector('button');
+
+      button.addEventListener(
+        'click',
+        () => {
+          goToSlide(index);
+        },
+      );
+    },
+  );
+
+  /*
+   * Keyboard navigation
+   */
+  slidesContainer.addEventListener(
+    'keydown',
+    (event) => {
+      let targetIndex =
+        activeIndex;
+
+      switch (event.key) {
+        case CAROUSEL_KEY.PREVIOUS:
+          targetIndex =
+            activeIndex - 1;
+          break;
+
+        case CAROUSEL_KEY.NEXT:
+          targetIndex =
+            activeIndex + 1;
+          break;
+
+        case CAROUSEL_KEY.FIRST:
+          targetIndex = 0;
+          break;
+
+        case CAROUSEL_KEY.LAST:
+          targetIndex =
+            slides.length - 1;
+          break;
+
+        default:
+          return;
+      }
+
+      event.preventDefault();
+
+      goToSlide(
+        targetIndex,
+      );
+    },
+  );
+
+  /*
+   * Detect slide changes caused by
+   * native swipe or trackpad scrolling.
+   */
+  slidesContainer.addEventListener(
+    'scroll',
+    () => {
+      window.cancelAnimationFrame(
+        scrollFrame,
+      );
+
+      scrollFrame =
+        window.requestAnimationFrame(
+          () => {
+            const nearestIndex =
+              getNearestSlideIndex(
+                slidesContainer,
+                slides,
+              );
+
+            if (
+              nearestIndex
+              !== activeIndex
+            ) {
+              updateActiveSlide(
+                nearestIndex,
+              );
+            }
+          },
+        );
+    },
+    {
+      passive: true,
+    },
+  );
+
+  /*
+   * Keep current slide aligned
+   * when viewport size changes.
+   */
+  window.addEventListener(
+    'resize',
+    () => {
+      window.cancelAnimationFrame(
+        scrollFrame,
+      );
+
+      scrollFrame =
+        window.requestAnimationFrame(
+          () => {
+            slidesContainer.scrollLeft =
+              slides[
+                activeIndex
+              ].offsetLeft;
+          },
+        );
+    },
+    {
+      passive: true,
+    },
+  );
+
+  /*
+   * Initial state
+   */
+  updateActiveSlide(0);
 }
