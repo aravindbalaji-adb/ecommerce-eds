@@ -1,3 +1,5 @@
+input,
+select,
 .input,
 .select {
   box-sizing: border-box;
@@ -14,11 +16,14 @@
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
+input::placeholder,
 .input::placeholder {
   color: var(--field-placeholder, var(--color-text-muted, #657780));
   opacity: 1;
 }
 
+input:focus-visible,
+select:focus-visible,
 .input:focus-visible,
 .select:focus-visible {
   border-color: var(--color-focus, #1769aa);
@@ -26,11 +31,15 @@
   outline-offset: 1px;
 }
 
+input[aria-invalid="true"],
+select[aria-invalid="true"],
 .input[aria-invalid="true"],
 .select[aria-invalid="true"] {
   border-color: var(--color-danger, #c43232);
 }
 
+input:disabled,
+select:disabled,
 .input:disabled,
 .select:disabled {
   border-color: var(--color-disabled-background, #e9eff2);
@@ -39,16 +48,18 @@
   cursor: not-allowed;
 }
 
+input.sm,
+select.sm,
 .input.sm,
-.select.sm,
-.input.small,
-.select.small {
+.select.sm {
   min-height: var(--field-height-sm, 2.25rem);
   padding-right: var(--field-padding-x-sm, var(--space-3, 0.75rem));
   padding-left: var(--field-padding-x-sm, var(--space-3, 0.75rem));
   font-size: var(--field-font-size-sm, 0.8125rem);
 }
 
+input.md,
+select.md,
 .input.md,
 .select.md {
   min-height: var(--field-height-md, 2.75rem);
@@ -57,10 +68,10 @@
   font-size: var(--field-font-size-md, 0.875rem);
 }
 
+input.lg,
+select.lg,
 .input.lg,
-.select.lg,
-.input.large,
-.select.large {
+.select.lg {
   min-height: var(--field-height-lg, 3.25rem);
   padding-right: var(--field-padding-x-lg, var(--space-4, 1rem));
   padding-left: var(--field-padding-x-lg, var(--space-4, 1rem));
@@ -68,6 +79,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
+  input,
+  select,
   .input,
   .select {
     transition: none;
