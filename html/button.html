@@ -149,7 +149,12 @@
           <p class="button-wrapper">
             <a class="button secondary" href="https://www.adobe.com/" title="Secondary Button">
               <span class="icon icon-cart" aria-hidden="true">
-                <img data-icon-name="cart" src="/icons/cart.svg" alt="" loading="lazy" width="16" height="16">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 4h2.1l2.2 11.1a2 2 0 0 0 2 1.6h8.8a2 2 0 0 0 1.9-1.4L22 8H6"/>
+                  <path d="M8 12h12"/>
+                  <circle cx="10" cy="20" r="1"/>
+                  <circle cx="18" cy="20" r="1"/>
+                </svg>
               </span>
               Secondary Button
             </a>
@@ -194,12 +199,23 @@
         icon.className = 'icon icon-search';
         icon.setAttribute('aria-hidden', 'true');
 
-        const image = document.createElement('img');
-        image.src = '/icons/search.svg';
-        image.alt = '';
-        image.width = 24;
-        image.height = 24;
-        icon.append(image);
+        const svgNamespace = 'http://www.w3.org/2000/svg';
+        const svg = document.createElementNS(svgNamespace, 'svg');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('fill', 'none');
+        svg.setAttribute('stroke', 'currentColor');
+        svg.setAttribute('stroke-width', '1.75');
+        svg.setAttribute('stroke-linecap', 'round');
+        svg.setAttribute('stroke-linejoin', 'round');
+
+        const circle = document.createElementNS(svgNamespace, 'circle');
+        circle.setAttribute('cx', '10.8');
+        circle.setAttribute('cy', '10.8');
+        circle.setAttribute('r', '7.3');
+        const handle = document.createElementNS(svgNamespace, 'path');
+        handle.setAttribute('d', 'm16.2 16.2 4.8 4.8');
+        svg.append(circle, handle);
+        icon.append(svg);
         return icon;
       }
 

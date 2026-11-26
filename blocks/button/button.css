@@ -74,10 +74,6 @@
   filter: none;
 }
 
-.button .icon svg {
-  fill: currentcolor;
-}
-
 .button.secondary {
   --button-color: var(--color-neutral-700, #34464e);
   --button-color-hover: var(--color-neutral-900, #15252c);

@@ -210,6 +210,54 @@ function decorateButtons(main) {
 }
 
 /**
+ * Inlines button icons so SVG currentColor follows the button's color.
+ * @param {HTMLElement} main The main container element
+ */
+async function inlineButtonIcons(main) {
+  const icons = [...main.querySelectorAll('.button .icon img[data-icon-name]')];
+  const svgCache = new Map();
+
+  await Promise.all(icons.map(async (image) => {
+    const { src } = image;
+    if (!svgCache.has(src)) {
+      svgCache.set(src, fetch(src)
+        .then((response) => {
+          if (!response.ok) throw new Error(`Icon request failed: ${response.status}`);
+          return response.text();
+        })
+        .then((markup) => {
+          const parsed = new DOMParser().parseFromString(markup, 'image/svg+xml');
+          const svg = parsed.documentElement;
+          if (svg.localName !== 'svg' || parsed.querySelector('parsererror')) {
+            throw new Error('Icon response is not a valid SVG');
+          }
+
+          [svg, ...svg.querySelectorAll('*')].forEach((element) => {
+            if (['script', 'foreignObject'].includes(element.localName)) {
+              element.remove();
+              return;
+            }
+            [...element.attributes].forEach((attribute) => {
+              if (/^on/i.test(attribute.name) || attribute.name === 'href') {
+                element.removeAttribute(attribute.name);
+              }
+            });
+          });
+          return svg;
+        }));
+    }
+
+    try {
+      const svg = await svgCache.get(src);
+      if (image.isConnected) image.replaceWith(document.importNode(svg, true));
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(`Failed to inline button icon "${image.dataset.iconName}"`, error);
+    }
+  }));
+}
+
+/**
  * Decorates the main element.
  * @param {Element} main The main element
  */
@@ -220,6 +268,7 @@ export function decorateMain(main) {
   decorateSections(main);
   decorateBlocks(main);
   decorateButtons(main);
+  inlineButtonIcons(main);
 }
 
 /**

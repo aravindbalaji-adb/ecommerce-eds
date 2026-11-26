@@ -45,8 +45,9 @@ ICON RULES
 4. Write color, variant, size, and layout options as plain words separated by
    spaces. Do not wrap them in colons; :outlined: and :sm: are interpreted as
    icon names.
-5. The icon appears before the label. Button icon size, spacing, and color
-   treatment are styled by .button .icon in blocks/button/button.css.
+5. The icon appears before the label. Button icon size and spacing are styled
+   by .button .icon in blocks/button/button.css. Icons are inlined in buttons
+   so their currentColor follows the variant color, including disabled states.
 6. For icon-only buttons, add icon-only and keep a descriptive label after it.
    The label is visually hidden but remains available to screen readers:
      :search: primary icon-only Search
