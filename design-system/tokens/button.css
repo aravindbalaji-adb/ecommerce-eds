@@ -16,4 +16,5 @@
   --button-font-size-lg: 1rem;
   --button-font-weight: var(--font-weight-semibold, 600);
   --button-border-radius: var(--radius-sm);
+  --button-border-radius-rounded : 9999px   
 }

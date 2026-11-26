@@ -33,7 +33,10 @@
   color: var(--button-on-color, #fff);
   text-decoration: none;
 }
-
+/* Rounded / Pill Button */
+.button.rounded {
+  border-radius: var(--button-border-radius-rounded, 9999px);
+}
 .button:focus-visible {
   outline: 3px solid var(--color-focus, #1769aa);
   outline-offset: 2px;

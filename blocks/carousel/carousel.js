@@ -33,7 +33,7 @@ function createNavigationButton(direction, label) {
   const button = document.createElement('button');
 
   button.type = 'button';
-  button.className = `carousel-navigation-button slide-${direction}`;
+  button.className = `button secondary outlined sm icon-only rounded carousel-navigation-button slide-${direction}`;
   button.setAttribute('aria-label', label);
 
   button.append(createNavigationIcon(direction));

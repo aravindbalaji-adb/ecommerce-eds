@@ -243,31 +243,15 @@
 
 .carousel .carousel-navigation-buttons button {
   display: inline-flex;
-
-  width: 2.75rem;
-  height: 2.75rem;
-
   margin: 0;
-  padding: 0;
-
   align-items: center;
   justify-content: center;
-
   border: 0;
-
-  border-radius: var(--radius-full, 9999px);
-
   background-color: rgb(255 255 255 / 72%);
   color: var(--carousel-text);
-
-  font: inherit;
-
   cursor: pointer;
-
   pointer-events: auto;
-
   appearance: none;
-
   box-shadow: var(--shadow-sm,
       0 1px 2px rgb(21 37 44 / 8%));
 
@@ -448,8 +432,7 @@
    TABLET
    600px - 899px
    ========================================================= */
-
-@media (600px <=width < 900px) {
+@media (max-width: 1199px) {
   .carousel {
     padding: var(--space-4, 1rem);
   }
@@ -459,16 +442,17 @@
     left: var(--space-3, 0.75rem);
   }
 
-  .carousel .carousel-navigation-buttons button {
-    width: 2.5rem;
-    height: 2.5rem;
+  
+  .carousel .carousel-navigation-buttons button.button.icon-only.sm, .button.icon-only {
+    width: 1.7rem;
+    min-width: 1.7rem;
+    min-height: 1.7rem;
   }
 
   .carousel .carousel-navigation-icon {
-    width: var(--space-5, 1.25rem);
-    height: var(--space-5, 1.25rem);
+    width: 1.2rem;
+    height: 1.2rem;
   }
-
   .carousel .carousel-slide-content {
     left: var(--space-6, 1.5rem);
 
@@ -495,8 +479,7 @@
    MOBILE
    <= 599px
    ========================================================= */
-
-@media (width < 600px) {
+@media (max-width: 767px) {
   .carousel {
     padding:
       var(--space-3, 0.75rem) var(--space-3, 0.75rem) var(--space-2, 0.5rem);
@@ -530,16 +513,15 @@
     left: var(--space-2, 0.5rem);
   }
 
-  .carousel .carousel-navigation-buttons button {
-    width: 2.25rem;
-    height: 2.25rem;
-
-    background-color: rgb(255 255 255 / 85%);
+  .carousel .carousel-navigation-buttons button.button.icon-only.sm, .button.icon-only {
+    width: 1.5rem;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
   }
 
   .carousel .carousel-navigation-icon {
-    width: var(--space-5, 1.25rem);
-    height: var(--space-5, 1.25rem);
+    width: 1rem;
+    height: 1rem;
   }
 
   /*
@@ -593,31 +575,7 @@
   }
 }
 
-/* =========================================================
-   VERY SMALL MOBILE
-   <= 359px
-   ========================================================= */
 
-@media (width < 360px) {
-  .carousel {
-    padding-inline: var(--space-2, 0.5rem);
-  }
-
-  .carousel .carousel-navigation-buttons {
-    right: var(--space-1, 0.25rem);
-    left: var(--space-1, 0.25rem);
-  }
-
-  .carousel .carousel-navigation-buttons button {
-    width: 2rem;
-    height: 2rem;
-  }
-
-  .carousel .carousel-navigation-icon {
-    width: var(--space-4, 1rem);
-    height: var(--space-4, 1rem);
-  }
-}
 
 /* =========================================================
    DARK THEME
