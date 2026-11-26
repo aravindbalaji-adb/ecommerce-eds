@@ -5,7 +5,7 @@ const CAROUSEL_KEY = {
   LAST: 'End',
 };
 
-const AUTOPLAY_INTERVAL = 5000;
+const AUTOPLAY_INTERVAL = 3000;
 
 function createNavigationIcon(direction) {
   const namespace = 'http://www.w3.org/2000/svg';
