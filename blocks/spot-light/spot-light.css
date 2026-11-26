@@ -1,0 +1,47 @@
+.spot-light {
+  width: 100%;
+}
+
+.spot-light .spot-light-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+.spot-light .spot-light-item {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+.spot-light .spot-light-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.spot-light .spot-light-item:hover .spot-light-image {
+  transform: scale(1.03);
+}
+
+/* Tablet */
+@media (max-width: 1199px) {
+  .spot-light .spot-light-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .spot-light .spot-light-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}

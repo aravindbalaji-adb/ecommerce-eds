@@ -1,12 +1,11 @@
 export default async function decorate(block) {
-    console.log("block: ", block);
-  const rows = [...block.children];
-  console.log("rows: ", rows);
+  const jsonLink = block.querySelector('a');
+  const jsonUrl = jsonLink?.href;
 
-  const jsonLink = rows[1]?.querySelector('a');
-  const jsonUrl = jsonLink?.href || rows[1]?.textContent.trim();
-
-  if (!jsonUrl) return;
+  if (!jsonUrl) {
+    console.error('Product JSON URL not found.');
+    return;
+  }
 
   try {
     const response = await fetch(jsonUrl);
@@ -18,31 +17,36 @@ export default async function decorate(block) {
     const json = await response.json();
     const products = json.data || [];
 
+    // Remove original JSON URL content
     block.innerHTML = '';
 
-    const productGrid = document.createElement('div');
-    productGrid.className = 'spot-light-grid';
+    // Product grid
+    const grid = document.createElement('div');
+    grid.className = 'spot-light-grid';
 
     products.forEach((product) => {
-      if (!product['Image URL']) return;
+      const imageUrl = product['Image URL'];
 
-      const link = document.createElement('a');
-      link.className = 'spot-light-item';
+      // Skip product if image is missing
+      if (!imageUrl) return;
 
-      // Product Detail Page URL
-      link.href = `/products/${product.ID}`;
+      // Clickable product item
+      const item = document.createElement('a');
+      item.className = 'spot-light-item';
+      item.href = `/products/${product.ID}`;
 
+      // Product image
       const image = document.createElement('img');
-
-      image.src = product['Image URL'];
+      image.className = 'spot-light-image';
+      image.src = imageUrl;
       image.alt = product.Title || 'Product';
       image.loading = 'lazy';
 
-      link.append(image);
-      productGrid.append(link);
+      item.append(image);
+      grid.append(item);
     });
 
-    block.append(productGrid);
+    block.append(grid);
   } catch (error) {
     console.error('Spot Light block error:', error);
   }
