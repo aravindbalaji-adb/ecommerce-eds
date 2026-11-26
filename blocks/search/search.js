@@ -154,8 +154,8 @@ export default function decorate(block) {
 
   const input = document.createElement('input');
   input.id = label.htmlFor;
-  input.className = 'search-input';
-  input.type = 'search';
+  input.className = 'input';
+  input.type = 'text';
   input.name = 'q';
   input.placeholder = 'Search for Products, Brands and More';
   input.autocomplete = 'off';
