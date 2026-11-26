@@ -12,8 +12,6 @@
 
   box-sizing: border-box;
   width: 100%;
-  padding: var(--space-8, 2rem);
-
   background-color: var(--carousel-background);
   color: var(--carousel-text);
 }
