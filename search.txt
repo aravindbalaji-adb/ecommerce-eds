@@ -1,0 +1,42 @@
+EDS SEARCH BLOCK AUTHORING
+=========================
+
+The Search block is implemented in blocks/search. It builds its own search
+form and results list, so no search fields or button markup need to be written
+in DA.live.
+
+ADD SEARCH TO A PAGE
+--------------------
+
+1. Open the page in DA.live.
+2. Insert a block named Search.
+3. Leave the block content empty; the Search block replaces its content with
+   the accessible search form.
+4. Preview and publish the page.
+
+The page can be placed at any path, for example /search. Search uses the
+site's query-index.json. Make sure the project has its query index configured
+and published.
+
+WHAT VISITORS SEE
+-----------------
+
+The form contains a labeled search input and a Search submit button. The
+button uses the `secondary text md` style and an inline search icon, so the
+icon color follows the button text color.
+
+Submitting a non-empty query searches indexed page titles, descriptions, and
+paths without case sensitivity. Up to 10 results are displayed. The query is
+stored in the `q` URL parameter, and opening a URL with `?q=term` runs that
+search on page load. An empty query or an unavailable index produces a status
+message.
+
+AUTHORING LIMITATIONS
+---------------------
+
+The Search block currently uses a fixed button style. It does not read button
+tokens such as `:cart: secondary text md icon-only Search` from its DA.live
+content; that content is discarded when the block creates the form. To change
+the search button's icon, variant, or size, update blocks/search/search.js.
+
+The icon-button token syntax for formatted links is documented in button.txt.

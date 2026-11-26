@@ -1,0 +1,59 @@
+EDS FORM CONTROL AUTHORING
+=========================
+
+This project includes CSS for input and select controls, but it does not
+currently include a Form block. The form-controls page is a design preview;
+its HTML is not generated from DA.live content.
+
+WHAT IS SUPPORTED
+-----------------
+
+For code-authored forms or a custom block, use these control classes:
+
+  input sm
+  input md
+  input lg
+  select sm
+  select md
+  select lg
+
+The small and large aliases are also supported:
+
+  input small
+  input large
+  select small
+  select large
+
+Each field still needs a real label and the appropriate HTML input or select
+element. Example markup for a custom block:
+
+  <label for="email">Email address</label>
+  <input id="email" class="input md" type="email" autocomplete="email">
+
+For an icon-only action beside a field, use the button classes and keep an
+accessible name:
+
+  <button class="button secondary text sm icon-only" type="button" aria-label="Search products">
+    <span class="icon icon-search" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="10.8" cy="10.8" r="7.3"/>
+        <path d="m16.2 16.2 4.8 4.8"/>
+      </svg>
+    </span>
+    <span class="button-label">Search products</span>
+  </button>
+
+DA.LIVE LIMITATION
+------------------
+
+Adding plain text or a table in DA.live will not create form controls in this
+project. Do not enter `input sm` or `select md` as standalone text and expect
+it to become a field. A developer must provide the HTML in a custom block or
+template first; then the classes above style those elements.
+
+PREVIEW
+-------
+
+The reference page at /html/form-controls.html shows the supported input and
+select sizes, plus a small icon-only form action.

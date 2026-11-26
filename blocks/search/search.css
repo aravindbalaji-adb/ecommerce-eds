@@ -29,6 +29,11 @@
   flex: 0 0 auto;
 }
 
+.search .button .icon {
+  width: var(--button-icon-size-md, 1.25rem);
+  height: var(--button-icon-size-md, 1.25rem);
+}
+
 .search .search-status {
   margin: var(--space-3, 0.75rem) 0;
   color: var(--color-text-muted, #657780);

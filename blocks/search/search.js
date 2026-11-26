@@ -92,9 +92,31 @@ export default function decorate(block) {
   input.autocomplete = 'off';
 
   const submit = document.createElement('button');
-  submit.className = 'button md';
+  submit.className = 'button secondary text md';
   submit.type = 'submit';
-  submit.textContent = 'Search';
+
+  const icon = document.createElement('span');
+  icon.className = 'icon icon-search';
+  icon.setAttribute('aria-hidden', 'true');
+
+  const svgNamespace = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNamespace, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '1.75');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+
+  const lens = document.createElementNS(svgNamespace, 'circle');
+  lens.setAttribute('cx', '10.8');
+  lens.setAttribute('cy', '10.8');
+  lens.setAttribute('r', '7.3');
+  const handle = document.createElementNS(svgNamespace, 'path');
+  handle.setAttribute('d', 'm16.2 16.2 4.8 4.8');
+  svg.append(lens, handle);
+  icon.append(svg);
+  submit.append(icon, 'Search');
 
   const status = document.createElement('p');
   status.className = 'search-status';

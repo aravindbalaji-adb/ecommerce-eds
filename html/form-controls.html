@@ -89,6 +89,21 @@
         font-size: 0.8125rem;
       }
 
+      .form-showcase-search {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .form-showcase-search .input {
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
+      .form-showcase-search .button {
+        flex: 0 0 auto;
+      }
+
       .form-showcase-size {
         display: inline-block;
         margin-bottom: 0.5rem;
@@ -132,7 +147,18 @@
             <span class="form-showcase-size">SM · 36px</span>
             <div class="form-showcase-field">
               <label for="product-search-sm">Search products</label>
-              <input id="product-search-sm" class="input sm" type="search" placeholder="Headphones, laptops...">
+              <form class="form-showcase-search" role="search">
+                <input id="product-search-sm" class="input sm" type="search" placeholder="Headphones, laptops...">
+                <button class="button secondary text sm icon-only" type="button" aria-label="Search products">
+                  <span class="icon icon-search" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="10.8" cy="10.8" r="7.3"/>
+                      <path d="m16.2 16.2 4.8 4.8"/>
+                    </svg>
+                  </span>
+                  <span class="button-label">Search products</span>
+                </button>
+              </form>
               <p>Find products by name or keyword.</p>
             </div>
           </article>
