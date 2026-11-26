@@ -20,8 +20,8 @@
   --color-neutral-900: #15252c;
   --color-success: #087c50;
   --color-success-hover: #006b46;
-  --color-danger: #c43232;
-  --color-danger-hover: #a82424;
+  --color-danger: #d32f2f;
+  --color-danger-hover: #c62828;
   --color-focus: #1769aa;
   --color-background: var(--color-neutral-50);
   --color-surface: var(--color-neutral-0);
