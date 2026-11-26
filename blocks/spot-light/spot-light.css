@@ -12,26 +12,31 @@
 .spot-light .spot-light-item {
   display: block;
   width: 100%;
+  min-width: 0;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 16px;
+  background-color: #f5f5f5;
   text-decoration: none;
 }
 
 .spot-light .spot-light-image {
   display: block;
   width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 12px;
-  transition: transform 0.3s ease;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
 
-.spot-light .spot-light-item:hover .spot-light-image {
-  transform: scale(1.03);
+/* Desktop */
+@media (min-width: 1200px) {
+  .spot-light .spot-light-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
 }
 
 /* Tablet */
-@media (max-width: 1199px) {
+@media (min-width: 768px) and (max-width: 1199px) {
   .spot-light .spot-light-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 20px;
@@ -45,3 +50,4 @@
     gap: 16px;
   }
 }
+
