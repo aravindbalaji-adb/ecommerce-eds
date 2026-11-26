@@ -30,7 +30,7 @@ body {
   min-width: 320px;
   margin: 0;
 
-  background-color: var(--color-page, var(--color-background, #fff));
+  background-color: var(--color-page, var(--color-background, #f7f7f7));
   color: var(--color-ink, var(--color-text, #1a1a1a));
 
   font-family: var(--font-family, "Inter", Arial, sans-serif);
