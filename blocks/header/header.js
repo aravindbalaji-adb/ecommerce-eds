@@ -1,12 +1,5 @@
 const desktopMedia = window.matchMedia('(min-width: 1200px)');
 
-/**
- * Updates the mobile/tablet navigation state.
- *
- * @param {HTMLElement} nav Navigation element
- * @param {HTMLButtonElement} button Hamburger button
- * @param {boolean} expanded Navigation state
- */
 function setNavigationState(nav, button, expanded) {
   nav.setAttribute('aria-expanded', String(expanded));
   button.setAttribute('aria-expanded', String(expanded));
@@ -17,65 +10,141 @@ function setNavigationState(nav, button, expanded) {
   );
 }
 
-/**
- * Handles responsive navigation when the viewport changes.
- *
- * Desktop >= 1200px
- * Tablet <= 1199px
- * Mobile <= 767px
- *
- * @param {HTMLElement} nav Navigation element
- * @param {HTMLButtonElement} button Hamburger button
- */
 function updateResponsiveState(nav, button) {
-  if (desktopMedia.matches) {
-    setNavigationState(nav, button, true);
-  } else {
-    setNavigationState(nav, button, false);
-  }
+  setNavigationState(
+    nav,
+    button,
+    desktopMedia.matches,
+  );
 }
 
-/**
- * Decorates the header block.
- *
- * @param {HTMLElement} block Header block
- */
 export default function decorate(block) {
-  const nav = block.querySelector('nav');
-  const hamburger = block.querySelector('.nav-hamburger');
-  const hamburgerButton = hamburger?.querySelector('button');
+  /*
+   * Get the sections coming from DA / document content.
+   *
+   * Expected:
+   * 1st div = brand
+   * 2nd div = search
+   * 3rd div = tools
+   */
+  const sections = [...block.children];
 
-  if (!nav || !hamburger || !hamburgerButton) {
+  if (!sections.length) {
     return;
   }
 
+  const brand = sections[0];
+  const search = sections[1];
+  const tools = sections[2];
+
   /*
-   * Ensure navigation has an ID so aria-controls works.
+   * Create nav wrapper
    */
-  if (!nav.id) {
-    nav.id = 'nav';
+  const navWrapper = document.createElement('div');
+  navWrapper.className = 'nav-wrapper';
+
+  /*
+   * Create nav
+   */
+  const nav = document.createElement('nav');
+  nav.id = 'nav';
+
+  /*
+   * Create hamburger container
+   */
+  const hamburger = document.createElement('div');
+  hamburger.className = 'nav-hamburger';
+
+  /*
+   * Create hamburger button
+   */
+  const hamburgerButton = document.createElement('button');
+
+  hamburgerButton.type = 'button';
+  hamburgerButton.setAttribute('aria-controls', nav.id);
+  hamburgerButton.setAttribute('aria-expanded', 'false');
+  hamburgerButton.setAttribute(
+    'aria-label',
+    'Open navigation',
+  );
+
+  /*
+   * Hamburger icon
+   */
+  const hamburgerIcon = document.createElement('span');
+  hamburgerIcon.className = 'nav-hamburger-icon';
+  hamburgerIcon.setAttribute('aria-hidden', 'true');
+
+  hamburgerButton.append(hamburgerIcon);
+  hamburger.append(hamburgerButton);
+
+  /*
+   * Brand section
+   */
+  if (brand) {
+    brand.classList.add('nav-brand');
   }
 
   /*
-   * Hamburger accessibility.
+   * Search section
    */
-  hamburgerButton.type = 'button';
-  hamburgerButton.setAttribute('aria-controls', nav.id);
+  if (search) {
+    search.classList.add(
+      'search-container',
+      'nav-sections',
+    );
+  }
 
   /*
-   * Initial responsive state.
+   * Tools section
    */
-  updateResponsiveState(nav, hamburgerButton);
+  if (tools) {
+    tools.classList.add('nav-tools');
+  }
 
   /*
-   * Open / close navigation.
+   * Build navigation structure
+   */
+  nav.append(hamburger);
+
+  if (brand) {
+    nav.append(brand);
+  }
+
+  if (search) {
+    nav.append(search);
+  }
+
+  if (tools) {
+    nav.append(tools);
+  }
+
+  navWrapper.append(nav);
+
+  /*
+   * Replace original block content
+   */
+  block.replaceChildren(navWrapper);
+
+  /*
+   * Set initial navigation state
+   */
+  updateResponsiveState(
+    nav,
+    hamburgerButton,
+  );
+
+  /*
+   * Hamburger click
    */
   hamburgerButton.addEventListener('click', () => {
     if (desktopMedia.matches) {
       return;
     }
 
-    const isExpanded = nav.getAttribute('aria-expanded') === 'true';
+    const isExpanded = (
+      nav.getAttribute('aria-expanded') === 'true'
+    );
 
     setNavigationState(
       nav,
@@ -85,20 +154,14 @@ export default function decorate(block) {
   });
 
   /*
-   * Close navigation using Escape.
+   * Escape key closes mobile/tablet navigation
    */
   document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape') {
-      return;
-    }
-
-    if (desktopMedia.matches) {
-      return;
-    }
-
-    const isExpanded = nav.getAttribute('aria-expanded') === 'true';
-
-    if (!isExpanded) {
+    if (
+      event.key !== 'Escape'
+      || desktopMedia.matches
+      || nav.getAttribute('aria-expanded') !== 'true'
+    ) {
       return;
     }
 
@@ -112,10 +175,12 @@ export default function decorate(block) {
   });
 
   /*
-   * When moving between mobile/tablet and desktop,
-   * reset navigation to the correct state.
+   * Handle breakpoint changes
    */
   desktopMedia.addEventListener('change', () => {
-    updateResponsiveState(nav, hamburgerButton);
+    updateResponsiveState(
+      nav,
+      hamburgerButton,
+    );
   });
 }
