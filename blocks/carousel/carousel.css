@@ -431,10 +431,6 @@
    600px - 899px
    ========================================================= */
 @media (max-width: 1199px) {
-  .carousel {
-    padding: var(--space-4, 1rem);
-  }
-
   .carousel .carousel-navigation-buttons {
     right: var(--space-3, 0.75rem);
     left: var(--space-3, 0.75rem);
@@ -478,11 +474,7 @@
    <= 599px
    ========================================================= */
 @media (max-width: 767px) {
-  .carousel {
-    padding:
-      var(--space-3, 0.75rem) var(--space-3, 0.75rem) var(--space-2, 0.5rem);
-  }
-
+  
   .carousel .carousel-slides-container {
     border-radius: var(--radius-sm, 0.375rem);
   }

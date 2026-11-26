@@ -1,4 +1,5 @@
 export default async function decorate(block) {
+  console.log("block:spot-light ", block);
   const jsonLink = block.querySelector('a');
   const jsonUrl = jsonLink?.href;
 
