@@ -41,10 +41,8 @@
 
   background-color: var(--carousel-surface);
 
-  box-shadow: var(
-    --shadow-sm,
-    0 1px 2px rgb(21 37 44 / 8%)
-  );
+  box-shadow: var(--shadow-sm,
+      0 1px 2px rgb(21 37 44 / 8%));
 }
 
 /* =========================================================
@@ -168,10 +166,8 @@
   top: 50%;
   left: var(--space-8, 2rem);
 
-  width: min(
-    40rem,
-    calc(100% - var(--space-16, 4rem))
-  );
+  width: min(40rem,
+      calc(100% - var(--space-16, 4rem)));
 
   padding: var(--space-6, 1.5rem);
 
@@ -210,11 +206,11 @@
   width: auto;
 }
 
-.carousel .carousel-slide-content > :first-child {
+.carousel .carousel-slide-content> :first-child {
   margin-top: 0;
 }
 
-.carousel .carousel-slide-content > :last-child {
+.carousel .carousel-slide-content> :last-child {
   margin-bottom: 0;
 }
 
@@ -272,10 +268,8 @@
 
   appearance: none;
 
-  box-shadow: var(
-    --shadow-sm,
-    0 1px 2px rgb(21 37 44 / 8%)
-  );
+  box-shadow: var(--shadow-sm,
+      0 1px 2px rgb(21 37 44 / 8%));
 
   transition:
     background-color 160ms ease,
@@ -290,10 +284,8 @@
 .carousel .carousel-navigation-buttons button:hover {
   background-color: var(--carousel-control-hover);
 
-  box-shadow: var(
-    --shadow-md,
-    0 4px 12px rgb(21 37 44 / 10%)
-  );
+  box-shadow: var(--shadow-md,
+      0 4px 12px rgb(21 37 44 / 10%));
 }
 
 /* =========================================================
@@ -355,8 +347,7 @@
   gap: var(--space-2, 0.5rem);
 
   padding:
-    var(--space-3, 0.75rem)
-    var(--space-4, 1rem);
+    var(--space-3, 0.75rem) var(--space-4, 1rem);
 
   background-color: var(--carousel-background);
 }
@@ -417,18 +408,14 @@
    ACTIVE INDICATOR
    ========================================================= */
 
-.carousel
-  .carousel-slide-indicator
-  button[aria-current='true'] {
+.carousel .carousel-slide-indicator button[aria-current='true'] {
   width: var(--space-10, 2.5rem);
 
   background-color: var(--carousel-indicator-active);
 
   box-shadow:
-    var(
-      --shadow-sm,
-      0 1px 2px rgb(21 37 44 / 8%)
-    ),
+    var(--shadow-sm,
+      0 1px 2px rgb(21 37 44 / 8%)),
     0 0 0 1px rgb(21 37 44 / 8%);
 
   cursor: default;
@@ -462,7 +449,7 @@
    600px - 899px
    ========================================================= */
 
-@media (600px <= width < 900px) {
+@media (600px <=width < 900px) {
   .carousel {
     padding: var(--space-4, 1rem);
   }
@@ -485,10 +472,8 @@
   .carousel .carousel-slide-content {
     left: var(--space-6, 1.5rem);
 
-    width: min(
-      28rem,
-      calc(100% - var(--space-12, 3rem))
-    );
+    width: min(28rem,
+        calc(100% - var(--space-12, 3rem)));
 
     padding: var(--space-5, 1.25rem);
   }
@@ -514,9 +499,7 @@
 @media (width < 600px) {
   .carousel {
     padding:
-      var(--space-3, 0.75rem)
-      var(--space-3, 0.75rem)
-      var(--space-2, 0.5rem);
+      var(--space-3, 0.75rem) var(--space-3, 0.75rem) var(--space-2, 0.5rem);
   }
 
   .carousel .carousel-slides-container {
@@ -602,12 +585,10 @@
 
   .carousel .carousel-slide-indicator button {
     width: var(--space-3, 0.75rem);
-    height: var(--space-2, 0.5rem);
+    height: var(--space-1, 0.25rem);
   }
 
-  .carousel
-    .carousel-slide-indicator
-    button[aria-current='true'] {
+  .carousel .carousel-slide-indicator button[aria-current='true'] {
     width: var(--space-8, 2rem);
   }
 }
