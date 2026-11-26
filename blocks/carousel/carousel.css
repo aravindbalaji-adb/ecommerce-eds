@@ -322,7 +322,7 @@
   display: block;
 
   width: var(--space-4, 1rem);
-  height: var(--space-4, 1rem);
+  height: var(--space-2, 0.5rem);
 
   margin: 0;
   padding: 0;

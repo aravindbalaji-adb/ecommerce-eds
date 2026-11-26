@@ -5,14 +5,14 @@ const CAROUSEL_KEY = {
   LAST: 'End',
 };
 
+const AUTOPLAY_INTERVAL = 5000;
+
 function createNavigationIcon(direction) {
   const namespace = 'http://www.w3.org/2000/svg';
-
   const svg = document.createElementNS(namespace, 'svg');
   const path = document.createElementNS(namespace, 'path');
 
   svg.classList.add('carousel-navigation-icon');
-
   svg.setAttribute('viewBox', '0 0 24 24');
   svg.setAttribute('aria-hidden', 'true');
   svg.setAttribute('focusable', 'false');
@@ -77,20 +77,19 @@ function prepareSlide(row, index, carouselId) {
   const picture = imageColumn?.querySelector('picture');
 
   /*
-   * Image
+   * Slide image
    */
   if (picture) {
-    const imageWrapper =
-      document.createElement('div');
+    const imageWrapper = document.createElement('div');
 
-    imageWrapper.className =
-      'carousel-slide-image';
+    imageWrapper.className = 'carousel-slide-image';
 
     const image = picture.querySelector('img');
 
     if (image) {
-      image.loading =
-        index === 0 ? 'eager' : 'lazy';
+      image.loading = index === 0
+        ? 'eager'
+        : 'lazy';
 
       image.decoding = 'async';
 
@@ -105,7 +104,7 @@ function prepareSlide(row, index, carouselId) {
   }
 
   /*
-   * Optional content
+   * Optional slide content
    */
   const contentColumns = columns.filter(
     (column) => column !== imageColumn,
@@ -120,14 +119,11 @@ function prepareSlide(row, index, carouselId) {
   );
 
   if (hasContent) {
-    const content =
-      document.createElement('div');
+    const content = document.createElement('div');
 
-    content.className =
-      'carousel-slide-content';
+    content.className = 'carousel-slide-content';
 
-    const alignment =
-      row.dataset.align || '';
+    const alignment = row.dataset.align || '';
 
     if (
       ['left', 'center', 'right', 'justify']
@@ -145,8 +141,7 @@ function prepareSlide(row, index, carouselId) {
     slide.append(content);
   }
 
-  const label =
-    getSlideLabel(slide, index);
+  const label = getSlideLabel(slide, index);
 
   slide.setAttribute(
     'aria-label',
@@ -157,14 +152,10 @@ function prepareSlide(row, index, carouselId) {
 }
 
 function createIndicator(slide, index) {
-  const item =
-    document.createElement('li');
+  const item = document.createElement('li');
+  const button = document.createElement('button');
 
-  const button =
-    document.createElement('button');
-
-  item.className =
-    'carousel-slide-indicator';
+  item.className = 'carousel-slide-indicator';
 
   button.type = 'button';
 
@@ -200,8 +191,7 @@ function setActiveSlide(
 
   indicators.forEach(
     (indicator, index) => {
-      const button =
-        indicator.querySelector('button');
+      const button = indicator.querySelector('button');
 
       if (index === activeIndex) {
         button.setAttribute(
@@ -224,19 +214,17 @@ function getNearestSlideIndex(
   slidesContainer,
   slides,
 ) {
-  const containerLeft =
-    slidesContainer
-      .getBoundingClientRect()
-      .left;
+  const containerLeft = slidesContainer
+    .getBoundingClientRect()
+    .left;
 
   let nearestIndex = 0;
   let nearestDistance = Infinity;
 
   slides.forEach((slide, index) => {
     const distance = Math.abs(
-      slide
-        .getBoundingClientRect()
-        .left - containerLeft,
+      slide.getBoundingClientRect().left
+        - containerLeft,
     );
 
     if (distance < nearestDistance) {
@@ -253,22 +241,30 @@ function scrollToSlide(
   slides,
   index,
 ) {
-  const prefersReducedMotion =
-    window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
+  const prefersReducedMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches;
 
   slidesContainer.scrollTo({
     left: slides[index].offsetLeft,
-    behavior:
-      prefersReducedMotion
-        ? 'auto'
-        : 'smooth',
+    behavior: prefersReducedMotion
+      ? 'auto'
+      : 'smooth',
   });
 }
 
 /**
- * Decorates Carousel block.
+ * Decorates the Carousel block.
+ *
+ * Features:
+ * - Previous / next navigation
+ * - Slide indicators
+ * - Keyboard navigation
+ * - Touch / swipe scrolling
+ * - Automatic scrolling
+ * - Pause on hover
+ * - Pause on keyboard focus
+ * - Reduced-motion support
  *
  * @param {HTMLElement} block Carousel block
  */
@@ -287,7 +283,7 @@ export default function decorate(block) {
     || 'Featured promotions';
 
   /*
-   * Accessibility
+   * Carousel accessibility
    */
   block.setAttribute(
     'role',
@@ -307,21 +303,13 @@ export default function decorate(block) {
   /*
    * Main container
    */
-  const container =
-    document.createElement('div');
+  const container = document.createElement('div');
 
   container.className =
     'carousel-slides-container';
 
   /*
-   * IMPORTANT:
-   * UL itself is now .carousel-slides
-   *
-   * This matches:
-   *
-   * .carousel .carousel-slides {
-   *   display: flex;
-   * }
+   * Slide list
    */
   const slidesContainer =
     document.createElement('ul');
@@ -340,7 +328,7 @@ export default function decorate(block) {
   );
 
   /*
-   * Create slides
+   * Build slides
    */
   const slides = rows.map(
     (row, index) => prepareSlide(
@@ -351,8 +339,9 @@ export default function decorate(block) {
   );
 
   slides.forEach((slide, index) => {
-    const label =
-      slide.getAttribute('aria-label');
+    const label = slide.getAttribute(
+      'aria-label',
+    );
 
     slide.setAttribute(
       'aria-label',
@@ -388,14 +377,10 @@ export default function decorate(block) {
     nextButton,
   );
 
-  container.append(
-    slidesContainer,
-  );
+  container.append(slidesContainer);
 
   if (slides.length > 1) {
-    container.append(
-      navigation,
-    );
+    container.append(navigation);
   }
 
   /*
@@ -414,22 +399,19 @@ export default function decorate(block) {
 
   const indicators = slides.map(
     (slide, index) => {
-      const indicator =
-        createIndicator(
-          slide,
-          index,
-        );
-
-      indicatorsList.append(
-        indicator,
+      const indicator = createIndicator(
+        slide,
+        index,
       );
+
+      indicatorsList.append(indicator);
 
       return indicator;
     },
   );
 
   /*
-   * Accessible status
+   * Screen-reader status
    */
   const status =
     document.createElement('p');
@@ -448,7 +430,7 @@ export default function decorate(block) {
   );
 
   /*
-   * Replace authored content
+   * Replace original EDS block markup
    */
   block.replaceChildren(
     container,
@@ -474,7 +456,16 @@ export default function decorate(block) {
 
   let activeIndex = 0;
   let scrollFrame;
+  let autoplayTimer = null;
 
+  const reducedMotionQuery =
+    window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    );
+
+  /*
+   * Update active slide
+   */
   function updateActiveSlide(index) {
     activeIndex = index;
 
@@ -486,6 +477,9 @@ export default function decorate(block) {
     );
   }
 
+  /*
+   * Navigate to a slide
+   */
   function goToSlide(index) {
     const normalizedIndex = (
       index + slides.length
@@ -503,7 +497,52 @@ export default function decorate(block) {
   }
 
   /*
-   * Previous
+   * Stop autoplay
+   */
+  function stopAutoplay() {
+    if (autoplayTimer !== null) {
+      window.clearInterval(
+        autoplayTimer,
+      );
+
+      autoplayTimer = null;
+    }
+  }
+
+  /*
+   * Start autoplay
+   */
+  function startAutoplay() {
+    stopAutoplay();
+
+    if (
+      reducedMotionQuery.matches
+      || document.hidden
+      || slides.length <= 1
+    ) {
+      return;
+    }
+
+    autoplayTimer = window.setInterval(
+      () => {
+        goToSlide(
+          activeIndex + 1,
+        );
+      },
+      AUTOPLAY_INTERVAL,
+    );
+  }
+
+  /*
+   * Restart autoplay countdown
+   */
+  function restartAutoplay() {
+    stopAutoplay();
+    startAutoplay();
+  }
+
+  /*
+   * Previous button
    */
   previousButton.addEventListener(
     'click',
@@ -511,11 +550,13 @@ export default function decorate(block) {
       goToSlide(
         activeIndex - 1,
       );
+
+      restartAutoplay();
     },
   );
 
   /*
-   * Next
+   * Next button
    */
   nextButton.addEventListener(
     'click',
@@ -523,30 +564,32 @@ export default function decorate(block) {
       goToSlide(
         activeIndex + 1,
       );
+
+      restartAutoplay();
     },
   );
 
   /*
-   * Indicators
+   * Indicator navigation
    */
   indicators.forEach(
     (indicator, index) => {
       const button =
-        indicator.querySelector(
-          'button',
-        );
+        indicator.querySelector('button');
 
       button.addEventListener(
         'click',
         () => {
           goToSlide(index);
+
+          restartAutoplay();
         },
       );
     },
   );
 
   /*
-   * Keyboard controls
+   * Keyboard navigation
    */
   slidesContainer.addEventListener(
     'keydown',
@@ -559,6 +602,8 @@ export default function decorate(block) {
             activeIndex - 1,
           );
 
+          restartAutoplay();
+
           break;
 
         case CAROUSEL_KEY.NEXT:
@@ -568,12 +613,16 @@ export default function decorate(block) {
             activeIndex + 1,
           );
 
+          restartAutoplay();
+
           break;
 
         case CAROUSEL_KEY.FIRST:
           event.preventDefault();
 
           goToSlide(0);
+
+          restartAutoplay();
 
           break;
 
@@ -584,6 +633,8 @@ export default function decorate(block) {
             slides.length - 1,
           );
 
+          restartAutoplay();
+
           break;
 
         default:
@@ -593,7 +644,7 @@ export default function decorate(block) {
   );
 
   /*
-   * Touch/swipe/trackpad
+   * Detect native swipe / trackpad scrolling
    */
   slidesContainer.addEventListener(
     'scroll',
@@ -602,25 +653,24 @@ export default function decorate(block) {
         scrollFrame,
       );
 
-      scrollFrame =
-        window.requestAnimationFrame(
-          () => {
-            const nearestIndex =
-              getNearestSlideIndex(
-                slidesContainer,
-                slides,
-              );
+      scrollFrame = window.requestAnimationFrame(
+        () => {
+          const nearestIndex =
+            getNearestSlideIndex(
+              slidesContainer,
+              slides,
+            );
 
-            if (
-              nearestIndex
-              !== activeIndex
-            ) {
-              updateActiveSlide(
-                nearestIndex,
-              );
-            }
-          },
-        );
+          if (
+            nearestIndex
+            !== activeIndex
+          ) {
+            updateActiveSlide(
+              nearestIndex,
+            );
+          }
+        },
+      );
     },
     {
       passive: true,
@@ -628,8 +678,77 @@ export default function decorate(block) {
   );
 
   /*
-   * Keep active slide aligned
-   * after responsive resize.
+   * Pause autoplay while mouse is over carousel
+   */
+  block.addEventListener(
+    'mouseenter',
+    stopAutoplay,
+  );
+
+  /*
+   * Resume autoplay when mouse leaves
+   */
+  block.addEventListener(
+    'mouseleave',
+    startAutoplay,
+  );
+
+  /*
+   * Pause autoplay while keyboard focus
+   * is inside carousel
+   */
+  block.addEventListener(
+    'focusin',
+    stopAutoplay,
+  );
+
+  /*
+   * Resume when keyboard focus leaves carousel
+   */
+  block.addEventListener(
+    'focusout',
+    (event) => {
+      if (
+        !block.contains(
+          event.relatedTarget,
+        )
+      ) {
+        startAutoplay();
+      }
+    },
+  );
+
+  /*
+   * Pause when browser tab becomes hidden.
+   */
+  document.addEventListener(
+    'visibilitychange',
+    () => {
+      if (document.hidden) {
+        stopAutoplay();
+      } else {
+        startAutoplay();
+      }
+    },
+  );
+
+  /*
+   * Respect reduced-motion changes
+   */
+  reducedMotionQuery.addEventListener(
+    'change',
+    () => {
+      if (reducedMotionQuery.matches) {
+        stopAutoplay();
+      } else {
+        startAutoplay();
+      }
+    },
+  );
+
+  /*
+   * Keep current slide aligned
+   * after screen resize.
    */
   window.addEventListener(
     'resize',
@@ -638,15 +757,12 @@ export default function decorate(block) {
         scrollFrame,
       );
 
-      scrollFrame =
-        window.requestAnimationFrame(
-          () => {
-            slidesContainer.scrollLeft =
-              slides[
-                activeIndex
-              ].offsetLeft;
-          },
-        );
+      scrollFrame = window.requestAnimationFrame(
+        () => {
+          slidesContainer.scrollLeft =
+            slides[activeIndex].offsetLeft;
+        },
+      );
     },
     {
       passive: true,
@@ -654,7 +770,12 @@ export default function decorate(block) {
   );
 
   /*
-   * Initial state
+   * Initial carousel state
    */
   updateActiveSlide(0);
+
+  /*
+   * Start automatic scrolling
+   */
+  startAutoplay();
 }
