@@ -2,14 +2,15 @@
   --carousel-background: var(--color-background, #f5f8fa);
   --carousel-surface: var(--color-surface, #fff);
   --carousel-text: var(--color-text, #15252c);
-  --carousel-control-background: rgb(255 255 255 / 88%);
-  --carousel-control-background-hover: var(--color-surface, #fff);
-  --carousel-control-icon: var(--color-text, #15252c);
+
   --carousel-indicator: #c9c8eb;
-  --carousel-indicator-hover: #9d9bd7;
+  --carousel-indicator-hover: #aaa8de;
   --carousel-indicator-active: var(--color-surface, #fff);
-  --carousel-indicator-ring: rgb(21 37 44 / 6%);
-  --carousel-banner-ratio: 5.35 / 1;
+
+  --carousel-control-background: rgb(255 255 255 / 90%);
+  --carousel-control-hover: var(--color-surface, #fff);
+
+  --carousel-aspect-ratio: 5.35 / 1;
 
   box-sizing: border-box;
   width: 100%;
@@ -24,8 +25,13 @@
   box-sizing: border-box;
 }
 
+/* =========================================================
+   CAROUSEL CONTAINER
+   ========================================================= */
+
 .carousel .carousel-slides-container {
   position: relative;
+  width: 100%;
   max-width: 120rem;
   margin-inline: auto;
   overflow: hidden;
@@ -33,6 +39,10 @@
   background-color: var(--carousel-surface);
   box-shadow: var(--shadow-sm, 0 1px 2px rgb(21 37 44 / 8%));
 }
+
+/* =========================================================
+   SLIDES
+   ========================================================= */
 
 .carousel .carousel-slides,
 .carousel .carousel-slide-indicators {
@@ -46,10 +56,13 @@
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
+
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
+
   scrollbar-width: none;
   overscroll-behavior-inline: contain;
+
   touch-action: pan-y pinch-zoom;
 }
 
@@ -57,57 +70,81 @@
   display: none;
 }
 
+/* =========================================================
+   INDIVIDUAL SLIDE
+   ========================================================= */
+
 .carousel .carousel-slide {
   position: relative;
+
   display: flex;
+
   flex: 0 0 100%;
+
   width: 100%;
-  min-width: 0;
-  aspect-ratio: var(--carousel-banner-ratio);
+  min-width: 100%;
+
+  aspect-ratio: var(--carousel-aspect-ratio);
+
   overflow: hidden;
+
   scroll-snap-align: start;
   scroll-snap-stop: always;
+
   background-color: var(--carousel-surface);
 }
 
-.carousel .carousel-slide[aria-hidden='true'] {
-  visibility: hidden;
-}
+/* =========================================================
+   SLIDE IMAGE
+   ========================================================= */
 
 .carousel .carousel-slide-image {
   position: absolute;
   inset: 0;
+
   width: 100%;
   height: 100%;
 }
 
 .carousel .carousel-slide-image picture {
   display: block;
+
   width: 100%;
   height: 100%;
 }
 
 .carousel .carousel-slide-image img {
   display: block;
+
   width: 100%;
   height: 100%;
+
   object-fit: cover;
   object-position: center;
+
+  border: 0;
 }
 
-/*
- * Optional content overlay.
- * This is displayed only when the authored slide contains content
- * outside the image column.
- */
+/* =========================================================
+   OPTIONAL SLIDE CONTENT
+   ========================================================= */
+
 .carousel .carousel-slide-content {
   position: relative;
   z-index: 1;
+
   align-self: center;
-  width: min(40rem, calc(100% - var(--space-16, 4rem)));
+
+  width: min(
+    40rem,
+    calc(100% - var(--space-16, 4rem))
+  );
+
   margin: var(--space-8, 2rem);
   padding: var(--space-6, 1.5rem);
+
   border-radius: var(--radius-md, 0.625rem);
+
   background-color: rgb(21 37 44 / 78%);
   color: var(--color-neutral-0, #fff);
 }
@@ -127,7 +164,9 @@
 }
 
 .carousel .carousel-slide-content[data-align='justify'] {
-  width: calc(100% - var(--space-16, 4rem));
+  width: calc(
+    100% - var(--space-16, 4rem)
+  );
 }
 
 .carousel .carousel-slide-content > :first-child {
@@ -138,36 +177,58 @@
   margin-bottom: 0;
 }
 
-/* Previous and next navigation */
+/* =========================================================
+   PREVIOUS / NEXT NAVIGATION
+   ========================================================= */
+
 .carousel .carousel-navigation-buttons {
   position: absolute;
   z-index: 2;
+
   top: 50%;
+
   right: var(--space-4, 1rem);
   left: var(--space-4, 1rem);
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   pointer-events: none;
+
   transform: translateY(-50%);
 }
 
 .carousel .carousel-navigation-buttons button {
   position: relative;
+
   display: inline-flex;
-  width: var(--button-height-md, 2.75rem);
-  height: var(--button-height-md, 2.75rem);
+
+  width: 2.75rem;
+  height: 2.75rem;
+
   margin: 0;
   padding: 0;
+
   align-items: center;
   justify-content: center;
+
   border: 0;
+
   border-radius: var(--radius-full, 9999px);
+
   background-color: transparent;
-  color: var(--carousel-control-icon);
+
+  color: var(--carousel-text);
+
   font: inherit;
+
   cursor: pointer;
+
   pointer-events: auto;
+
+  appearance: none;
+
   transition:
     background-color 160ms ease,
     box-shadow 160ms ease,
@@ -176,67 +237,106 @@
 
 .carousel .carousel-navigation-buttons button:hover {
   background-color: var(--carousel-control-background);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgb(21 37 44 / 8%));
+
+  box-shadow: var(
+    --shadow-sm,
+    0 1px 2px rgb(21 37 44 / 8%)
+  );
 }
 
 .carousel .carousel-navigation-buttons button:focus-visible {
   outline: 3px solid var(--color-focus, #1769aa);
   outline-offset: 2px;
-  background-color: var(--carousel-control-background-hover);
+
+  background-color: var(--carousel-control-hover);
 }
 
 .carousel .carousel-navigation-buttons button:active {
   transform: scale(0.94);
 }
 
-.carousel .carousel-navigation-buttons button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+/* =========================================================
+   ARROW ICON
+   ========================================================= */
 
 .carousel .carousel-navigation-icon {
   display: block;
-  width: var(--space-5, 1.25rem);
-  height: var(--space-5, 1.25rem);
+
+  width: var(--space-6, 1.5rem);
+  height: var(--space-6, 1.5rem);
+
   pointer-events: none;
 }
 
 .carousel .carousel-navigation-icon path {
   fill: none;
+
   stroke: currentcolor;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-/* Indicators */
+/* =========================================================
+   INDICATOR CONTAINER
+   ========================================================= */
+
 .carousel .carousel-slide-indicators {
   display: flex;
-  min-height: var(--space-8, 2rem);
+
+  min-height: var(--space-10, 2.5rem);
+
   flex-wrap: wrap;
+
   align-items: center;
   justify-content: center;
+
   gap: var(--space-2, 0.5rem);
-  padding: var(--space-3, 0.75rem);
+
+  padding:
+    var(--space-3, 0.75rem)
+    var(--space-4, 1rem);
+
   background-color: var(--carousel-background);
 }
 
+/* =========================================================
+   INDICATOR ITEM
+   ========================================================= */
+
 .carousel .carousel-slide-indicator {
   display: flex;
+
   align-items: center;
   justify-content: center;
+
+  margin: 0;
+  padding: 0;
 }
+
+/* =========================================================
+   INDICATOR BUTTON
+   ========================================================= */
 
 .carousel .carousel-slide-indicator button {
   display: block;
-  width: var(--space-3, 0.75rem);
-  height: var(--space-3, 0.75rem);
+
+  width: var(--space-4, 1rem);
+  height: var(--space-4, 1rem);
+
   margin: 0;
   padding: 0;
+
   border: 0;
+
   border-radius: var(--radius-full, 9999px);
+
   background-color: var(--carousel-indicator);
+
   cursor: pointer;
+
+  appearance: none;
+
   transition:
     width 160ms ease,
     background-color 160ms ease,
@@ -252,32 +352,57 @@
   outline-offset: 3px;
 }
 
-.carousel .carousel-slide-indicator button[aria-current='true'] {
+/* =========================================================
+   ACTIVE INDICATOR
+   ========================================================= */
+
+.carousel
+  .carousel-slide-indicator
+  button[aria-current='true'] {
   width: var(--space-10, 2.5rem);
+
   background-color: var(--carousel-indicator-active);
+
   box-shadow:
-    var(--shadow-sm, 0 1px 2px rgb(21 37 44 / 8%)),
-    0 0 0 1px var(--carousel-indicator-ring);
+    var(
+      --shadow-sm,
+      0 1px 2px rgb(21 37 44 / 8%)
+    ),
+    0 0 0 1px rgb(21 37 44 / 8%);
+
   cursor: default;
 }
 
-/* Screen-reader-only status */
+/* =========================================================
+   SCREEN READER STATUS
+   ========================================================= */
+
 .carousel .carousel-status {
   position: absolute;
+
   width: 1px;
   height: 1px;
+
   margin: -1px;
   padding: 0;
+
   overflow: hidden;
+
   border: 0;
+
   clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+
   white-space: nowrap;
 }
 
-/* Tablet */
+/* =========================================================
+   TABLET
+   ========================================================= */
+
 @media (width < 900px) {
   .carousel {
-    --carousel-banner-ratio: 3 / 1;
+    --carousel-aspect-ratio: 3 / 1;
 
     padding: var(--space-4, 1rem);
   }
@@ -288,15 +413,23 @@
   }
 
   .carousel .carousel-slide-content {
-    width: min(32rem, calc(100% - var(--space-12, 3rem)));
+    width: min(
+      32rem,
+      calc(100% - var(--space-12, 3rem))
+    );
+
     margin: var(--space-6, 1.5rem);
+    padding: var(--space-5, 1.25rem);
   }
 }
 
-/* Mobile */
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media (width < 600px) {
   .carousel {
-    --carousel-banner-ratio: 16 / 9;
+    --carousel-aspect-ratio: 16 / 9;
 
     padding: var(--space-3, 0.75rem);
   }
@@ -311,34 +444,57 @@
   }
 
   .carousel .carousel-navigation-buttons button {
-    width: var(--button-height-sm, 2.25rem);
-    height: var(--button-height-sm, 2.25rem);
+    width: 2.25rem;
+    height: 2.25rem;
+
     background-color: var(--carousel-control-background);
   }
 
   .carousel .carousel-navigation-icon {
-    width: var(--space-4, 1rem);
-    height: var(--space-4, 1rem);
+    width: var(--space-5, 1.25rem);
+    height: var(--space-5, 1.25rem);
   }
 
   .carousel .carousel-slide-content {
     align-self: flex-end;
-    width: calc(100% - var(--space-6, 1.5rem));
+
+    width: calc(
+      100% - var(--space-6, 1.5rem)
+    );
+
     margin: var(--space-3, 0.75rem);
     padding: var(--space-4, 1rem);
   }
 
-  .carousel .carousel-slide-content[data-align='right'],
-  .carousel .carousel-slide-content[data-align='center'] {
+  .carousel .carousel-slide-content[data-align='center'],
+  .carousel .carousel-slide-content[data-align='right'] {
     margin-inline: var(--space-3, 0.75rem);
     text-align: left;
   }
 
   .carousel .carousel-slide-indicators {
+    min-height: var(--space-8, 2rem);
+
     gap: var(--space-2, 0.5rem);
+
     padding: var(--space-2, 0.5rem);
   }
+
+  .carousel .carousel-slide-indicator button {
+    width: var(--space-3, 0.75rem);
+    height: var(--space-3, 0.75rem);
+  }
+
+  .carousel
+    .carousel-slide-indicator
+    button[aria-current='true'] {
+    width: var(--space-8, 2rem);
+  }
 }
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
   .carousel .carousel-slides {
