@@ -1,3 +1,121 @@
 .visually-hidden{
     display:none;
 }
+
+.search-wrapper,
+.search.block,
+.search-form {
+  width: 100%;
+}
+
+.search-form {
+  margin: 0;
+}
+
+/* Default = MD */
+.search-field {
+  --search-height: var(--field-height-md, 2.75rem);
+  --search-padding-x: var(--field-padding-x-md, var(--space-3, 0.75rem));
+  --search-font-size: var(--field-font-size-md, 0.875rem);
+  --search-icon-size: 1.25rem;
+  --search-gap: var(--space-2, 0.5rem);
+
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: var(--search-height);
+  gap: var(--search-gap);
+  box-sizing: border-box;
+  padding: 0 var(--search-padding-x);
+
+  background-color: var(--field-background, var(--color-surface, #fff));
+  border: 1px solid var(--field-border-color, var(--color-border, #d7e1e5));
+  border-radius: var(--field-border-radius, var(--radius-sm, 0.375rem));
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+/* SMALL */
+.search-field.sm{
+  --search-height: var(--field-height-sm, 2.25rem);
+  --search-padding-x: var(--field-padding-x-sm, var(--space-3, 0.75rem));
+  --search-font-size: var(--field-font-size-sm, 0.8125rem);
+  --search-icon-size: 1rem;
+}
+
+/* MEDIUM */
+.search-field.md {
+  --search-height: var(--field-height-md, 2.75rem);
+  --search-padding-x: var(--field-padding-x-md, var(--space-3, 0.75rem));
+  --search-font-size: var(--field-font-size-md, 0.875rem);
+  --search-icon-size: 1.25rem;
+}
+
+/* LARGE */
+.search-field.lg {
+  --search-height: var(--field-height-lg, 3.25rem);
+  --search-padding-x: var(--field-padding-x-lg, var(--space-4, 1rem));
+  --search-font-size: var(--field-font-size-lg, 1rem);
+  --search-icon-size: 1.5rem;
+}
+
+.search-icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+
+  width: var(--search-icon-size);
+  height: var(--search-icon-size);
+
+  color: var(--field-placeholder, var(--color-text-muted, #657780));
+}
+
+.search-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Only search-specific overrides.
+ * Base .input styles continue to come from your design system.
+ */
+.search-field .input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: auto;
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+
+  font-size: var(--search-font-size);
+}
+
+/* Focus belongs to the complete search control */
+.search-field:focus-within {
+  border-color: var(--color-focus, #1769aa);
+  outline: 3px solid var(--color-focus, #1769aa);
+  outline-offset: 1px;
+}
+
+.search-field .input:focus-visible {
+  border: 0;
+  outline: 0;
+}
+
+.search-status:empty,
+.search-results:empty {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-field {
+    transition: none;
+  }
+}

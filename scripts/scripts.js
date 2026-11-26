@@ -111,7 +111,7 @@ function buildAutoBlocks(main) {
 function getButtonOptions(link) {
   const colorClasses = ['primary', 'secondary', 'success', 'accent'];
   const variantClasses = ['contained', 'outlined', 'text', 'tertiary'];
-  const sizeClasses = ['sm', 'md', 'lg', 'small', 'large'];
+  const sizeClasses = ['sm', 'md', 'lg'];
   const modifierClasses = ['full-width', 'icon-only'];
   const textNode = [...link.childNodes].find(
     (node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim(),

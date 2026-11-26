@@ -40,9 +40,7 @@
 }
 
 .input.sm,
-.select.sm,
-.input.small,
-.select.small {
+.select.sm{
   min-height: var(--field-height-sm, 2.25rem);
   padding-right: var(--field-padding-x-sm, var(--space-3, 0.75rem));
   padding-left: var(--field-padding-x-sm, var(--space-3, 0.75rem));
@@ -58,9 +56,7 @@
 }
 
 .input.lg,
-.select.lg,
-.input.large,
-.select.large {
+.select.lg{
   min-height: var(--field-height-lg, 3.25rem);
   padding-right: var(--field-padding-x-lg, var(--space-4, 1rem));
   padding-left: var(--field-padding-x-lg, var(--space-4, 1rem));
