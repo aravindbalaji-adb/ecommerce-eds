@@ -26,18 +26,18 @@ export default async function decorate(block) {
       return;
     }
 
-    // Filter only spot-light items
+    // Filter only spotlight items
     const spotlightProducts = products.filter(
-      (product) => product?.type?.trim().toLowerCase() === 'spot-light',
+      (product) => product?.type?.trim().toLowerCase() === 'spotlight',
     );
 
     if (!spotlightProducts.length) {
-      console.warn('Spot Light: No spot-light products found.');
+      console.warn('Spot Light: No spotlight products found.');
       return;
     }
 
     const grid = document.createElement('div');
-    grid.className = 'spot-light-grid';
+    grid.className = 'spotlight-grid';
 
     spotlightProducts.forEach((product) => {
       const imageUrl = product?.['image-url'];
@@ -48,7 +48,7 @@ export default async function decorate(block) {
       if (!imageUrl || !productId) return;
 
       const item = document.createElement('a');
-      item.className = 'spot-light-item';
+      item.className = 'spotlight-item';
       item.href = `/products/${encodeURIComponent(productId)}`;
 
       item.setAttribute(
@@ -59,7 +59,7 @@ export default async function decorate(block) {
       );
 
       const image = document.createElement('img');
-      image.className = 'spot-light-image';
+      image.className = 'spotlight-image';
       image.src = imageUrl;
       image.alt = productTitle || `Product ${productId}`;
       image.loading = 'lazy';
