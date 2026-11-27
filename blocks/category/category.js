@@ -34,8 +34,7 @@ function createCategoryItem(category) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
-  const categoryUrl = `/category/${slug}`;
-
+  const categoryUrl = `products?category=${slug}`;
   /*
    * Reuse complete custom Button component.
    */
