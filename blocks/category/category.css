@@ -97,9 +97,7 @@
     appearance: none;
 }
 
-.category .category-item-button:hover .category-item-title {
-    color: var(--color-action, #008557);
-}
+
 
 .category .category-item-button:focus-visible {
     outline: 3px solid var(--color-focus, #1769aa);
@@ -226,11 +224,6 @@
 }
 
 
-.category .category-navigation-button:hover:not(:disabled) {
-    background-color: var(--color-neutral-50, #f5f8fa);
-
-    color: var(--color-action, #008557);
-}
 
 
 .category .category-navigation-button:focus-visible {

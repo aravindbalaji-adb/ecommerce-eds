@@ -21,14 +21,11 @@ const SIZES = [
 ];
 
 function getOption(block, options, fallback = '') {
-  return options.find((option) => block.classList.contains(option)) || fallback;
+  return options.find(
+    (option) => block.classList.contains(option),
+  ) || fallback;
 }
 
-/**
- * Makes decorative icons inaccessible to screen readers.
- *
- * @param {Element} button
- */
 function decorateIcons(button) {
   const icons = button.querySelectorAll('.icon');
 
@@ -43,19 +40,16 @@ function decorateIcons(button) {
   });
 }
 
-/**
- * Adds accessibility support to icon-only buttons.
- *
- * @param {Element} button
- */
 function decorateIconOnlyButton(button) {
-  const existingAriaLabel = button.getAttribute('aria-label');
+  const existingAriaLabel =
+    button.getAttribute('aria-label');
 
   if (existingAriaLabel) {
     return;
   }
 
-  const buttonLabel = button.querySelector('.button-label');
+  const buttonLabel =
+    button.querySelector('.button-label');
 
   if (buttonLabel?.textContent.trim()) {
     button.setAttribute(
@@ -66,97 +60,166 @@ function decorateIconOnlyButton(button) {
     return;
   }
 
-  const image = button.querySelector('img[alt]');
+  const image =
+    button.querySelector('img[alt]');
 
   if (image?.alt.trim()) {
-    button.setAttribute('aria-label', image.alt.trim());
+    button.setAttribute(
+      'aria-label',
+      image.alt.trim(),
+    );
 
     image.setAttribute('alt', '');
+
     return;
   }
 
   const text = button.textContent.trim();
 
   if (text) {
-    button.setAttribute('aria-label', text);
+    button.setAttribute(
+      'aria-label',
+      text,
+    );
   }
 }
 
-/**
- * Handles disabled state accessibility.
- *
- * @param {Element} button
- */
 function decorateDisabledState(button) {
-  const isDisabled = button.getAttribute('aria-disabled') === 'true';
+  const isDisabled =
+    button.getAttribute('aria-disabled') === 'true';
 
   if (!isDisabled) {
     return;
   }
 
-  /*
-   * <a> elements don't support the native disabled attribute.
-   * aria-disabled announces the disabled state to assistive technology.
-   */
-  button.setAttribute('aria-disabled', 'true');
+  button.setAttribute(
+    'aria-disabled',
+    'true',
+  );
 
-  button.addEventListener('click', (event) => {
-    event.preventDefault();
-  });
-
-  button.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+  button.addEventListener(
+    'click',
+    (event) => {
       event.preventDefault();
-    }
-  });
+    },
+  );
+
+  button.addEventListener(
+    'keydown',
+    (event) => {
+      if (
+        event.key === 'Enter'
+        || event.key === ' '
+      ) {
+        event.preventDefault();
+      }
+    },
+  );
 }
 
 /**
- * Decorates an individual button.
+ * Applies design-system button styles.
  *
- * @param {Element} button
- * @param {Element} block
+ * @param {Element} button Button or anchor element
+ * @param {Object} options Button options
  */
-function decorateButton(button, block) {
-  const color = getOption(block, COLORS, 'primary');
-  const variant = getOption(block, VARIANTS, 'contained');
-  const size = getOption(block, SIZES, 'md');
+export function applyButtonStyles(
+  button,
+  {
+    color = 'primary',
+    variant = 'contained',
+    size = 'md',
+    fullWidth = false,
+    iconOnly = false,
+  } = {},
+) {
+  const safeColor =
+    COLORS.includes(color)
+      ? color
+      : 'primary';
+
+  const safeVariant =
+    VARIANTS.includes(variant)
+      ? variant
+      : 'contained';
+
+  const safeSize =
+    SIZES.includes(size)
+      ? size
+      : 'md';
 
   button.classList.add(
     'button',
-    color,
-    variant,
-    size,
+    safeColor,
+    safeVariant,
+    safeSize,
   );
 
-  /* Full-width */
-  if (block.classList.contains('full-width')) {
-    button.classList.add('full-width');
+  if (fullWidth) {
+    button.classList.add(
+      'full-width',
+    );
   }
 
-  /* Icon-only */
-  if (block.classList.contains('icon-only')) {
-    button.classList.add('icon-only');
+  if (iconOnly) {
+    button.classList.add(
+      'icon-only',
+    );
 
     decorateIconOnlyButton(button);
   }
 
-  /* Decorative icons */
   decorateIcons(button);
-
-  /* Disabled accessibility */
   decorateDisabledState(button);
+
+  return button;
 }
 
-/**
- * Decorates the button block.
- *
- * @param {Element} block
- */
+function decorateButton(button, block) {
+  applyButtonStyles(
+    button,
+    {
+      color: getOption(
+        block,
+        COLORS,
+        'primary',
+      ),
+
+      variant: getOption(
+        block,
+        VARIANTS,
+        'contained',
+      ),
+
+      size: getOption(
+        block,
+        SIZES,
+        'md',
+      ),
+
+      fullWidth:
+        block.classList.contains(
+          'full-width',
+        ),
+
+      iconOnly:
+        block.classList.contains(
+          'icon-only',
+        ),
+    },
+  );
+}
+
 export default function decorate(block) {
-  const buttons = block.querySelectorAll('a, button');
+  const buttons =
+    block.querySelectorAll(
+      'a, button',
+    );
 
   buttons.forEach((button) => {
-    decorateButton(button, block);
+    decorateButton(
+      button,
+      block,
+    );
   });
 }

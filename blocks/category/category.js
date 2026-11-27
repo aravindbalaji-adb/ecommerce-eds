@@ -1,7 +1,14 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
+import { applyButtonStyles } from '../button/button.js';
 
 const CATEGORY_TYPE = 'category';
 
+/**
+ * Creates previous/next arrow icon.
+ *
+ * @param {'previous'|'next'} direction Arrow direction
+ * @returns {SVGElement}
+ */
 function createArrowIcon(direction) {
   const namespace = 'http://www.w3.org/2000/svg';
 
@@ -26,14 +33,24 @@ function createArrowIcon(direction) {
   return svg;
 }
 
+/**
+ * Creates category previous/next navigation button.
+ *
+ * Reuses shared button design system.
+ *
+ * @param {'previous'|'next'} direction Navigation direction
+ * @param {string} label Accessible label
+ * @returns {HTMLButtonElement}
+ */
 function createNavigationButton(direction, label) {
   const button = document.createElement('button');
 
   button.type = 'button';
-  button.className = [
+
+  button.classList.add(
     'category-navigation-button',
     `category-navigation-${direction}`,
-  ].join(' ');
+  );
 
   button.setAttribute('aria-label', label);
 
@@ -41,10 +58,23 @@ function createNavigationButton(direction, label) {
     createArrowIcon(direction),
   );
 
+  applyButtonStyles(button, {
+    color: 'secondary',
+    variant: 'text',
+    size: 'sm',
+    iconOnly: true,
+  });
+
   return button;
 }
 
-function createCategoryImage(imageUrl, title) {
+/**
+ * Creates optimized category image.
+ *
+ * @param {string} imageUrl Category image URL
+ * @returns {HTMLElement|null}
+ */
+function createCategoryImage(imageUrl) {
   if (!imageUrl) {
     return null;
   }
@@ -55,12 +85,16 @@ function createCategoryImage(imageUrl, title) {
 
   const picture = createOptimizedPicture(
     imageUrl,
-    title || '',
+    '',
     false,
     [
       {
-        media: '(min-width: 768px)',
+        media: '(min-width: 1200px)',
         width: '96',
+      },
+      {
+        media: '(min-width: 768px)',
+        width: '80',
       },
       {
         width: '72',
@@ -75,8 +109,8 @@ function createCategoryImage(imageUrl, title) {
     image.decoding = 'async';
 
     /*
-     * The category title is already visible as text,
-     * so the image is decorative.
+     * Decorative image because category
+     * name is already displayed as text.
      */
     image.alt = '';
   }
@@ -86,20 +120,79 @@ function createCategoryImage(imageUrl, title) {
   return imageWrapper;
 }
 
+/**
+ * Creates category text content.
+ *
+ * Empty elements are not rendered.
+ *
+ * @param {string} title Category title
+ * @param {string} subtitle Category subtitle
+ * @param {string} description Category description
+ * @returns {HTMLElement|null}
+ */
+function createCategoryContent(
+  title,
+  subtitle,
+  description,
+) {
+  if (!title && !subtitle && !description) {
+    return null;
+  }
+
+  const content = document.createElement('span');
+
+  content.className = 'category-item-content';
+
+  if (title) {
+    const titleElement = document.createElement('span');
+
+    titleElement.className = 'category-item-title';
+    titleElement.textContent = title;
+
+    content.append(titleElement);
+  }
+
+  if (subtitle) {
+    const subtitleElement = document.createElement('span');
+
+    subtitleElement.className = 'category-item-subtitle';
+    subtitleElement.textContent = subtitle;
+
+    content.append(subtitleElement);
+  }
+
+  if (description) {
+    const descriptionElement = document.createElement('span');
+
+    descriptionElement.className = 'category-item-description';
+    descriptionElement.textContent = description;
+
+    content.append(descriptionElement);
+  }
+
+  return content;
+}
+
+/**
+ * Creates one category item.
+ *
+ * @param {Object} category Category JSON record
+ * @returns {HTMLLIElement|null}
+ */
 function createCategoryItem(category) {
   const {
     id,
-    title,
-    subtitle,
-    description,
+    title = '',
+    subtitle = '',
+    description = '',
   } = category;
 
-  const imageUrl = category['image-url'];
+  const imageUrl = category['image-url'] || '';
 
   /*
-   * Don't create an empty category.
+   * Completely empty category should not render.
    */
-  if (!title && !imageUrl) {
+  if (!title && !subtitle && !description && !imageUrl) {
     return null;
   }
 
@@ -107,23 +200,23 @@ function createCategoryItem(category) {
 
   item.className = 'category-item';
 
-  if (id) {
+  if (id !== undefined && id !== null) {
     item.dataset.categoryId = String(id);
   }
 
   /*
-   * Use button because the category is an
-   * interactive filter/selection control.
+   * Category works as a selection/filter action.
+   * Keep semantic <button>.
    *
-   * If categories navigate to URLs later,
-   * change this element to an <a>.
+   * If category later navigates directly to PLP,
+   * change this to an <a href="...">.
    */
   const button = document.createElement('button');
 
   button.type = 'button';
   button.className = 'category-item-button';
 
-  if (id) {
+  if (id !== undefined && id !== null) {
     button.dataset.categoryId = String(id);
   }
 
@@ -132,64 +225,40 @@ function createCategoryItem(category) {
       'aria-label',
       `View ${title}`,
     );
+  } else {
+    button.setAttribute(
+      'aria-label',
+      'View category',
+    );
   }
 
-  const image = createCategoryImage(
-    imageUrl,
-    title,
-  );
+  /*
+   * Category image
+   */
+  const image = createCategoryImage(imageUrl);
 
   if (image) {
     button.append(image);
   }
 
-  if (
-    title
-    || subtitle
-    || description
-  ) {
-    const content = document.createElement('span');
+  /*
+   * Category textual content
+   */
+  const content = createCategoryContent(
+    title,
+    subtitle,
+    description,
+  );
 
-    content.className = 'category-item-content';
+  if (content) {
+    button.append(content);
+  }
 
-    if (title) {
-      const titleElement = document.createElement('span');
-
-      titleElement.className = 'category-item-title';
-      titleElement.textContent = title;
-
-      content.append(titleElement);
-    }
-
-    if (subtitle) {
-      const subtitleElement =
-        document.createElement('span');
-
-      subtitleElement.className =
-        'category-item-subtitle';
-
-      subtitleElement.textContent =
-        subtitle;
-
-      content.append(subtitleElement);
-    }
-
-    if (description) {
-      const descriptionElement =
-        document.createElement('span');
-
-      descriptionElement.className =
-        'category-item-description';
-
-      descriptionElement.textContent =
-        description;
-
-      content.append(descriptionElement);
-    }
-
-    if (content.children.length) {
-      button.append(content);
-    }
+  /*
+   * Don't render an empty button.
+   */
+  if (!button.children.length) {
+    return null;
   }
 
   item.append(button);
@@ -197,52 +266,96 @@ function createCategoryItem(category) {
   return item;
 }
 
+/**
+ * Determines whether horizontal scrolling is available.
+ *
+ * @param {HTMLElement} list Category list
+ * @returns {boolean}
+ */
+function hasHorizontalOverflow(list) {
+  return list.scrollWidth > list.clientWidth + 2;
+}
+
+/**
+ * Updates previous/next navigation state.
+ *
+ * @param {HTMLElement} list Category list
+ * @param {HTMLButtonElement} previousButton Previous button
+ * @param {HTMLButtonElement} nextButton Next button
+ */
 function updateNavigationState(
   list,
   previousButton,
   nextButton,
 ) {
-  const maxScrollLeft =
-    list.scrollWidth - list.clientWidth;
-
   const tolerance = 2;
 
-  previousButton.disabled =
-    list.scrollLeft <= tolerance;
-
-  nextButton.disabled =
-    list.scrollLeft >= maxScrollLeft - tolerance;
-}
-
-function scrollCategories(list, direction) {
-  const firstItem =
-    list.querySelector('.category-item');
-
-  if (!firstItem) {
-    return;
-  }
-
-  const itemWidth =
-    firstItem.getBoundingClientRect().width;
-
-  const styles =
-    window.getComputedStyle(list);
-
-  const gap =
-    Number.parseFloat(styles.columnGap)
-    || Number.parseFloat(styles.gap)
-    || 0;
-
-  const visibleItems = Math.max(
-    1,
-    Math.floor(
-      list.clientWidth / (itemWidth + gap),
-    ),
+  const maxScrollLeft = Math.max(
+    0,
+    list.scrollWidth - list.clientWidth,
   );
 
+  const isAtStart =
+    list.scrollLeft <= tolerance;
+
+  const isAtEnd =
+    list.scrollLeft >= maxScrollLeft - tolerance;
+
+  const hasOverflow =
+    hasHorizontalOverflow(list);
+
+  previousButton.disabled =
+    !hasOverflow || isAtStart;
+
+  nextButton.disabled =
+    !hasOverflow || isAtEnd;
+
+  previousButton.setAttribute(
+    'aria-disabled',
+    String(!hasOverflow || isAtStart),
+  );
+
+  nextButton.setAttribute(
+    'aria-disabled',
+    String(!hasOverflow || isAtEnd),
+  );
+
+  /*
+   * When all categories fit, navigation
+   * controls are unnecessary.
+   */
+  previousButton.hidden = !hasOverflow;
+  nextButton.hidden = !hasOverflow;
+}
+
+/**
+ * Determines amount to scroll.
+ *
+ * @param {HTMLElement} list Category list
+ * @returns {number}
+ */
+function getScrollAmount(list) {
+  /*
+   * Scroll most of the visible viewport.
+   * This works better than using the width
+   * of the first item because category names
+   * have different widths.
+   */
+  return Math.max(
+    200,
+    list.clientWidth * 0.75,
+  );
+}
+
+/**
+ * Scrolls category list.
+ *
+ * @param {HTMLElement} list Category list
+ * @param {'previous'|'next'} direction Scroll direction
+ */
+function scrollCategories(list, direction) {
   const scrollAmount =
-    (itemWidth + gap)
-    * Math.max(1, visibleItems - 1);
+    getScrollAmount(list);
 
   const prefersReducedMotion =
     window.matchMedia(
@@ -262,6 +375,12 @@ function scrollCategories(list, direction) {
   });
 }
 
+/**
+ * Loads JSON and returns only category records.
+ *
+ * @param {string} url JSON endpoint
+ * @returns {Promise<Object[]>}
+ */
 async function loadCategories(url) {
   if (!url) {
     return [];
@@ -282,13 +401,14 @@ async function loadCategories(url) {
       return [];
     }
 
-    return json.data.filter(
-      (item) => (
-        item.type
-          ?.trim()
-          .toLowerCase() === CATEGORY_TYPE
-      ),
-    );
+    return json.data.filter((item) => {
+      const type =
+        typeof item.type === 'string'
+          ? item.type.trim().toLowerCase()
+          : '';
+
+      return type === CATEGORY_TYPE;
+    });
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error(
@@ -300,6 +420,16 @@ async function loadCategories(url) {
   }
 }
 
+/**
+ * Gets JSON URL from authored Category block.
+ *
+ * Supports:
+ * - Authored link
+ * - Plain URL text
+ *
+ * @param {HTMLElement} block Category block
+ * @returns {string}
+ */
 function getDataUrl(block) {
   const link =
     block.querySelector('a[href]');
@@ -311,12 +441,16 @@ function getDataUrl(block) {
   return block.textContent.trim();
 }
 
+/**
+ * Renders empty state.
+ *
+ * @param {HTMLElement} block Category block
+ */
 function renderEmptyState(block) {
   const message =
     document.createElement('p');
 
-  message.className =
-    'category-empty';
+  message.className = 'category-empty';
 
   message.textContent =
     'No categories available.';
@@ -324,6 +458,32 @@ function renderEmptyState(block) {
   block.replaceChildren(message);
 }
 
+/**
+ * Decorates Category block.
+ *
+ * Expected JSON:
+ *
+ * {
+ *   "data": [
+ *     {
+ *       "id": "11",
+ *       "type": "category",
+ *       "image-url": "...",
+ *       "title": "Mobiles",
+ *       "subtitle": "",
+ *       "description": ""
+ *     }
+ *   ]
+ * }
+ *
+ * Only records where:
+ *
+ * type === "category"
+ *
+ * are rendered.
+ *
+ * @param {HTMLElement} block Category block
+ */
 export default async function decorate(block) {
   const dataUrl = getDataUrl(block);
 
@@ -332,6 +492,9 @@ export default async function decorate(block) {
     return;
   }
 
+  /*
+   * Load category JSON.
+   */
   const categories =
     await loadCategories(dataUrl);
 
@@ -341,13 +504,12 @@ export default async function decorate(block) {
   }
 
   /*
-   * Semantic navigation landmark
+   * Semantic navigation landmark.
    */
   const nav =
     document.createElement('nav');
 
-  nav.className =
-    'category-navigation';
+  nav.className = 'category-navigation';
 
   nav.setAttribute(
     'aria-label',
@@ -355,19 +517,25 @@ export default async function decorate(block) {
   );
 
   /*
-   * Category list
+   * Previous navigation button.
+   */
+  const previousButton =
+    createNavigationButton(
+      'previous',
+      'Scroll to previous categories',
+    );
+
+  /*
+   * Semantic category list.
    */
   const list =
     document.createElement('ul');
 
-  list.className =
-    'category-list';
+  list.className = 'category-list';
 
-  list.setAttribute(
-    'aria-label',
-    'Categories',
-  );
-
+  /*
+   * Render category records.
+   */
   categories.forEach((category) => {
     const item =
       createCategoryItem(category);
@@ -383,16 +551,7 @@ export default async function decorate(block) {
   }
 
   /*
-   * Previous navigation
-   */
-  const previousButton =
-    createNavigationButton(
-      'previous',
-      'Scroll to previous categories',
-    );
-
-  /*
-   * Next navigation
+   * Next navigation button.
    */
   const nextButton =
     createNavigationButton(
@@ -400,6 +559,9 @@ export default async function decorate(block) {
       'Scroll to next categories',
     );
 
+  /*
+   * Previous button action.
+   */
   previousButton.addEventListener(
     'click',
     () => {
@@ -410,6 +572,9 @@ export default async function decorate(block) {
     },
   );
 
+  /*
+   * Next button action.
+   */
   nextButton.addEventListener(
     'click',
     () => {
@@ -421,7 +586,13 @@ export default async function decorate(block) {
   );
 
   /*
-   * Keyboard scrolling
+   * Keyboard support.
+   *
+   * ArrowLeft:
+   * scroll previous categories.
+   *
+   * ArrowRight:
+   * scroll next categories.
    */
   list.addEventListener(
     'keydown',
@@ -433,6 +604,8 @@ export default async function decorate(block) {
           list,
           'previous',
         );
+
+        return;
       }
 
       if (event.key === 'ArrowRight') {
@@ -447,7 +620,8 @@ export default async function decorate(block) {
   );
 
   /*
-   * Update navigation after scrolling.
+   * Update navigation state after
+   * touch, mouse or button scrolling.
    */
   let scrollFrame;
 
@@ -475,11 +649,23 @@ export default async function decorate(block) {
   );
 
   /*
-   * Handle responsive changes.
+   * Build final semantic DOM.
    */
-  window.addEventListener(
-    'resize',
-    () => {
+  nav.append(
+    previousButton,
+    list,
+    nextButton,
+  );
+
+  block.replaceChildren(nav);
+
+  /*
+   * Use ResizeObserver instead of a global
+   * resize listener so this component reacts
+   * to its actual available width.
+   */
+  const resizeObserver =
+    new ResizeObserver(() => {
       window.cancelAnimationFrame(
         scrollFrame,
       );
@@ -494,22 +680,12 @@ export default async function decorate(block) {
             );
           },
         );
-    },
-    {
-      passive: true,
-    },
-  );
+    });
 
-  nav.append(
-    previousButton,
-    list,
-    nextButton,
-  );
-
-  block.replaceChildren(nav);
+  resizeObserver.observe(nav);
 
   /*
-   * Initial arrow state.
+   * Initial navigation state after layout.
    */
   window.requestAnimationFrame(() => {
     updateNavigationState(
