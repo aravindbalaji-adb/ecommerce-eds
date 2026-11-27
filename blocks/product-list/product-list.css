@@ -1,0 +1,501 @@
+.product-list {
+  --product-filter-width: 17.5rem;
+  --product-grid-gap: var(--space-6, 1.5rem);
+
+  width: 100%;
+
+  color: var(--color-text, #15252c);
+  background-color: var(--color-background, #fff);
+}
+
+/* =========================================================
+   MAIN LAYOUT
+   ========================================================= */
+
+.product-list .product-list-wrapper {
+  display: flex;
+
+  width: 100%;
+  min-width: 0;
+
+  align-items: flex-start;
+}
+
+/* =========================================================
+   LEFT FILTER AREA
+   ========================================================= */
+
+.product-list .product-left {
+  width: var(--product-filter-width);
+
+  flex: 0 0 var(--product-filter-width);
+
+  border-right:
+    1px solid
+    var(--color-border, #d7e1e5);
+}
+
+/* =========================================================
+   FILTER CONTAINER
+   ========================================================= */
+
+.product-list .product-filters {
+  width: 100%;
+
+  background-color:
+    var(--color-surface, #fff);
+}
+
+/* =========================================================
+   FILTER HEADER
+   ========================================================= */
+
+.product-list .product-filter-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-3, 0.75rem);
+
+  padding:
+    var(--space-4, 1rem)
+    var(--space-5, 1.25rem);
+
+  border-bottom:
+    1px solid
+    var(--color-border, #d7e1e5);
+}
+
+.product-list .product-filter-header h2 {
+  margin: 0;
+
+  font-size:
+    var(--body-font-size-s, 1rem);
+
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* =========================================================
+   FILTER GROUP
+   ========================================================= */
+
+.product-list .product-filter {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: var(--space-2, 0.5rem);
+
+  margin: 0;
+
+  padding:
+    var(--space-5, 1.25rem);
+
+  border: 0;
+
+  border-bottom:
+    1px solid
+    var(--color-border, #d7e1e5);
+}
+
+.product-list .product-filter legend {
+  margin-bottom:
+    var(--space-3, 0.75rem);
+
+  padding: 0;
+
+  color: var(--color-text, #15252c);
+
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
+
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* =========================================================
+   FILTER OPTIONS
+   ========================================================= */
+
+.product-list .product-filter label {
+  display: flex;
+
+  align-items: center;
+
+  gap: var(--space-2, 0.5rem);
+
+  min-height: 2rem;
+
+  color:
+    var(--color-text, #15252c);
+
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
+
+  line-height: 1.4;
+
+  cursor: pointer;
+}
+
+.product-list .product-filter input {
+  width: 1rem;
+  height: 1rem;
+
+  flex: 0 0 1rem;
+
+  margin: 0;
+
+  accent-color:
+    var(--color-primary, #1976d2);
+}
+
+.product-list .product-filter input:focus-visible {
+  outline:
+    3px solid
+    var(--color-focus, #1769aa);
+
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   RIGHT CONTENT
+   ========================================================= */
+
+.product-list .product-right {
+  flex: 1 1 auto;
+
+  min-width: 0;
+
+  padding:
+    0
+    var(--space-6, 1.5rem)
+    var(--space-6, 1.5rem);
+}
+
+/* =========================================================
+   PRODUCT HEADER
+   ========================================================= */
+
+.product-list .product-header {
+  display: flex;
+
+  min-height: 4.5rem;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-6, 1.5rem);
+
+  padding-block:
+    var(--space-3, 0.75rem);
+
+  border-bottom:
+    1px solid
+    var(--color-border, #d7e1e5);
+}
+
+.product-list .product-header h1 {
+  margin: 0;
+
+  color:
+    var(--color-text, #15252c);
+
+  font-size:
+    var(--heading-font-size-m, 1.5rem);
+
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.product-list .product-header p {
+  margin:
+    var(--space-1, 0.25rem)
+    0
+    0;
+
+  color:
+    var(--color-text-muted, #657780);
+
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
+}
+
+/* =========================================================
+   SORT
+   ========================================================= */
+
+.product-list .product-sort {
+  display: flex;
+
+  align-items: center;
+
+  gap: var(--space-2, 0.5rem);
+
+  flex: 0 0 auto;
+}
+
+.product-list .product-sort > span {
+  color:
+    var(--color-text-muted, #657780);
+
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
+
+  white-space: nowrap;
+}
+
+.product-list .product-sort select {
+  min-width: 10rem;
+
+  min-height: 2.5rem;
+
+  padding:
+    var(--space-2, 0.5rem)
+    var(--space-8, 2rem)
+    var(--space-2, 0.5rem)
+    var(--space-3, 0.75rem);
+
+  border:
+    1px solid
+    var(--color-border, #d7e1e5);
+
+  border-radius:
+    var(--radius-sm, 0.375rem);
+
+  background-color:
+    var(--color-surface, #fff);
+
+  color:
+    var(--color-text, #15252c);
+
+  font: inherit;
+
+  cursor: pointer;
+}
+
+.product-list .product-sort select:focus-visible {
+  outline:
+    3px solid
+    var(--color-focus, #1769aa);
+
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   PRODUCT LIST
+   ========================================================= */
+
+.product-list .product-list-content {
+  width: 100%;
+
+  padding-top:
+    var(--space-5, 1.25rem);
+}
+
+/* =========================================================
+   PRODUCT ITEMS
+   DESKTOP
+   ========================================================= */
+
+.product-list .product-items {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: var(--product-grid-gap);
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+.product-list .product-items > li {
+  min-width: 0;
+
+  margin: 0;
+  padding: 0;
+}
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.product-list .product-empty {
+  margin: 0;
+
+  padding:
+    var(--space-10, 2.5rem)
+    var(--space-6, 1.5rem);
+
+  color:
+    var(--color-text-muted, #657780);
+
+  text-align: center;
+}
+
+/* =========================================================
+   TABLET
+   <= 1199px
+   ========================================================= */
+
+@media (max-width: 1199px) {
+  .product-list {
+    --product-filter-width: 14rem;
+    --product-grid-gap: var(--space-4, 1rem);
+  }
+
+  .product-list .product-filter-header,
+  .product-list .product-filter {
+    padding:
+      var(--space-4, 1rem);
+  }
+
+  .product-list .product-right {
+    padding:
+      0
+      var(--space-4, 1rem)
+      var(--space-4, 1rem);
+  }
+
+  .product-list .product-items {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+  .product-list .product-header h1 {
+    font-size:
+      var(--heading-font-size-s, 1.25rem);
+  }
+}
+
+/* =========================================================
+   MOBILE
+   <= 767px
+   ========================================================= */
+
+@media (max-width: 767px) {
+  .product-list {
+    --product-grid-gap:
+      var(--space-3, 0.75rem);
+  }
+
+  .product-list .product-list-wrapper {
+    display: block;
+  }
+
+  /*
+   * Desktop sidebar becomes hidden.
+   *
+   * The mobile implementation should expose
+   * the same filters inside a Filter button/
+   * drawer or dialog.
+   */
+  .product-list .product-left {
+    display: none;
+  }
+
+  .product-list .product-right {
+    width: 100%;
+
+    padding:
+      0
+      var(--space-3, 0.75rem)
+      var(--space-4, 1rem);
+  }
+
+  .product-list .product-header {
+    min-height: auto;
+
+    align-items: flex-start;
+
+    gap: var(--space-3, 0.75rem);
+
+    padding-block:
+      var(--space-3, 0.75rem);
+  }
+
+  .product-list .product-header h1 {
+    font-size:
+      var(--body-font-size-m, 1.125rem);
+  }
+
+  .product-list .product-header p {
+    font-size:
+      var(--body-font-size-xs, 0.875rem);
+  }
+
+  .product-list .product-sort {
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: var(--space-1, 0.25rem);
+  }
+
+  .product-list .product-sort select {
+    min-width: 7.5rem;
+
+    min-height: 2.25rem;
+
+    padding:
+      var(--space-1, 0.25rem)
+      var(--space-6, 1.5rem)
+      var(--space-1, 0.25rem)
+      var(--space-2, 0.5rem);
+
+    font-size:
+      var(--body-font-size-xs, 0.875rem);
+  }
+
+  .product-list .product-list-content {
+    padding-top:
+      var(--space-3, 0.75rem);
+  }
+
+  /*
+   * Two products per row,
+   * matching common mobile commerce PLPs.
+   */
+  .product-list .product-items {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+   <= 359px
+   ========================================================= */
+
+@media (max-width: 359px) {
+  .product-list .product-right {
+    padding-inline:
+      var(--space-2, 0.5rem);
+  }
+
+  /*
+   * Keep two columns where possible.
+   * Product card CSS should reduce its
+   * internal spacing at this breakpoint.
+   */
+  .product-list .product-items {
+    gap:
+      var(--space-2, 0.5rem);
+  }
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .product-list *,
+  .product-list *::before,
+  .product-list *::after {
+    scroll-behavior: auto;
+  }
+}
