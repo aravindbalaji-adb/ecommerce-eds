@@ -15,6 +15,7 @@ export default async function decorate(block) {
     }
 
     const json = await response.json();
+
     const products = Array.isArray(json?.data) ? json.data : [];
 
     // Remove authored JSON link
@@ -25,13 +26,13 @@ export default async function decorate(block) {
       return;
     }
 
-    // Filter only Spotlight products
+    // Filter only spot-light items
     const spotlightProducts = products.filter(
-      (product) => product?.Type?.trim().toLowerCase() === 'spotlight',
+      (product) => product?.type?.trim().toLowerCase() === 'spot-light',
     );
 
     if (!spotlightProducts.length) {
-      console.warn('Spot Light: No spotlight products found.');
+      console.warn('Spot Light: No spot-light products found.');
       return;
     }
 
@@ -40,9 +41,10 @@ export default async function decorate(block) {
 
     spotlightProducts.forEach((product) => {
       const imageUrl = product?.['image-url'];
-      const productId = product?.ID;
-      const productTitle = product?.Title;
+      const productId = product?.id;
+      const productTitle = product?.title;
 
+      // Skip item if required data is missing
       if (!imageUrl || !productId) return;
 
       const item = document.createElement('a');
@@ -51,17 +53,19 @@ export default async function decorate(block) {
 
       item.setAttribute(
         'aria-label',
-        productTitle ? `View ${productTitle}` : 'View product',
+        productTitle
+          ? `View ${productTitle}`
+          : `View product ${productId}`,
       );
 
       const image = document.createElement('img');
       image.className = 'spot-light-image';
       image.src = imageUrl;
-      image.alt = productTitle || 'Product';
+      image.alt = productTitle || `Product ${productId}`;
       image.loading = 'lazy';
       image.decoding = 'async';
 
-      // Remove item if image fails
+      // Remove item if image fails to load
       image.addEventListener('error', () => {
         item.remove();
       });
@@ -70,7 +74,7 @@ export default async function decorate(block) {
       grid.append(item);
     });
 
-    // Don't add an empty grid
+    // Add grid only when valid items exist
     if (grid.children.length) {
       block.append(grid);
     }
