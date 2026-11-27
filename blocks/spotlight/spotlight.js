@@ -29,7 +29,7 @@ export default async function decorate(block) {
     grid.className = 'spot-light-grid';
 
     products.forEach((product) => {
-      const imageUrl = product?.['Image URL'];
+      const imageUrl = product?.['img-url'];
       const productId = product?.ID;
       const productTitle = product?.Title;
 
