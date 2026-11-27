@@ -1,6 +1,7 @@
 .product-list {
   --product-filter-width: 17.5rem;
   --product-grid-gap: var(--space-6, 1.5rem);
+  --product-content-padding: var(--space-6, 1.5rem);
 
   width: 100%;
 
@@ -26,13 +27,24 @@
    ========================================================= */
 
 .product-list .product-left {
+  position: sticky;
+  top: 0;
+
   width: var(--product-filter-width);
+  max-height: 100vh;
 
   flex: 0 0 var(--product-filter-width);
+
+  overflow-y: auto;
 
   border-right:
     1px solid
     var(--color-border, #d7e1e5);
+
+  background-color:
+    var(--color-surface, #fff);
+
+  scrollbar-width: thin;
 }
 
 /* =========================================================
@@ -41,6 +53,8 @@
 
 .product-list .product-filters {
   width: 100%;
+
+  margin: 0;
 
   background-color:
     var(--color-surface, #fff);
@@ -58,6 +72,8 @@
 
   gap: var(--space-3, 0.75rem);
 
+  min-height: 4.5rem;
+
   padding:
     var(--space-4, 1rem)
     var(--space-5, 1.25rem);
@@ -70,11 +86,49 @@
 .product-list .product-filter-header h2 {
   margin: 0;
 
+  color: var(--color-text, #15252c);
+
   font-size:
     var(--body-font-size-s, 1rem);
 
   font-weight: 700;
   line-height: 1.25;
+}
+
+/* Clear all control */
+
+.product-list .product-filter-clear {
+  margin: 0;
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color: var(--color-accent, #ff3f6c);
+
+  font: inherit;
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.product-list .product-filter-clear:hover {
+  text-decoration: underline;
+}
+
+.product-list .product-filter-clear:focus-visible {
+  border-radius:
+    var(--radius-xs, 0.25rem);
+
+  outline:
+    3px solid
+    var(--color-focus, #1769aa);
+
+  outline-offset: 2px;
 }
 
 /* =========================================================
@@ -87,6 +141,8 @@
   flex-direction: column;
 
   gap: var(--space-2, 0.5rem);
+
+  min-width: 0;
 
   margin: 0;
 
@@ -101,6 +157,8 @@
 }
 
 .product-list .product-filter legend {
+  width: 100%;
+
   margin-bottom:
     var(--space-3, 0.75rem);
 
@@ -113,6 +171,8 @@
 
   font-weight: 700;
   line-height: 1.25;
+
+  text-transform: uppercase;
 }
 
 /* =========================================================
@@ -122,11 +182,12 @@
 .product-list .product-filter label {
   display: flex;
 
+  min-width: 0;
+  min-height: 2rem;
+
   align-items: center;
 
   gap: var(--space-2, 0.5rem);
-
-  min-height: 2rem;
 
   color:
     var(--color-text, #15252c);
@@ -139,6 +200,11 @@
   cursor: pointer;
 }
 
+.product-list .product-filter label:hover {
+  color:
+    var(--color-primary, #1976d2);
+}
+
 .product-list .product-filter input {
   width: 1rem;
   height: 1rem;
@@ -148,7 +214,9 @@
   margin: 0;
 
   accent-color:
-    var(--color-primary, #1976d2);
+    var(--color-accent, #ff3f6c);
+
+  cursor: pointer;
 }
 
 .product-list .product-filter input:focus-visible {
@@ -157,6 +225,40 @@
     var(--color-focus, #1769aa);
 
   outline-offset: 2px;
+}
+
+/* Filter count */
+
+.product-list .product-filter-count {
+  color:
+    var(--color-text-muted, #657780);
+
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
+}
+
+/* More options */
+
+.product-list .product-filter-more {
+  align-self: flex-start;
+
+  margin-top:
+    var(--space-1, 0.25rem);
+
+  padding: 0;
+
+  border: 0;
+
+  background: transparent;
+
+  color:
+    var(--color-accent, #ff3f6c);
+
+  font: inherit;
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
+
+  cursor: pointer;
 }
 
 /* =========================================================
@@ -170,8 +272,8 @@
 
   padding:
     0
-    var(--space-6, 1.5rem)
-    var(--space-6, 1.5rem);
+    var(--product-content-padding)
+    var(--product-content-padding);
 }
 
 /* =========================================================
@@ -194,6 +296,10 @@
   border-bottom:
     1px solid
     var(--color-border, #d7e1e5);
+}
+
+.product-list .product-header-content {
+  min-width: 0;
 }
 
 .product-list .product-header h1 {
@@ -229,11 +335,11 @@
 .product-list .product-sort {
   display: flex;
 
+  flex: 0 0 auto;
+
   align-items: center;
 
   gap: var(--space-2, 0.5rem);
-
-  flex: 0 0 auto;
 }
 
 .product-list .product-sort > span {
@@ -246,10 +352,23 @@
   white-space: nowrap;
 }
 
-.product-list .product-sort select {
-  min-width: 10rem;
+.product-list .product-sort label {
+  display: inline-flex;
 
-  min-height: 2.5rem;
+  align-items: center;
+
+  gap: var(--space-2, 0.5rem);
+
+  color:
+    var(--color-text-muted, #657780);
+
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
+}
+
+.product-list .product-sort select {
+  min-width: 12rem;
+  min-height: 2.75rem;
 
   padding:
     var(--space-2, 0.5rem)
@@ -271,8 +390,15 @@
     var(--color-text, #15252c);
 
   font: inherit;
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
 
   cursor: pointer;
+}
+
+.product-list .product-sort select:hover {
+  border-color:
+    var(--color-primary, #1976d2);
 }
 
 .product-list .product-sort select:focus-visible {
@@ -284,7 +410,156 @@
 }
 
 /* =========================================================
-   PRODUCT LIST
+   TOP FILTER CONTROLS
+   ========================================================= */
+
+.product-list .product-toolbar {
+  display: flex;
+
+  min-height: 3.75rem;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-4, 1rem);
+
+  padding-block:
+    var(--space-3, 0.75rem);
+
+  border-bottom:
+    1px solid
+    var(--color-border, #d7e1e5);
+}
+
+.product-list .product-toolbar-options {
+  display: flex;
+
+  min-width: 0;
+
+  align-items: center;
+
+  gap: var(--space-5, 1.25rem);
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+}
+
+.product-list
+  .product-toolbar-options::-webkit-scrollbar {
+  display: none;
+}
+
+.product-list .product-toolbar-option {
+  display: inline-flex;
+
+  flex: 0 0 auto;
+
+  align-items: center;
+
+  gap: var(--space-2, 0.5rem);
+
+  padding: var(--space-2, 0.5rem);
+
+  border: 0;
+
+  background: transparent;
+
+  color:
+    var(--color-text, #15252c);
+
+  font: inherit;
+  font-size:
+    var(--body-font-size-s, 1rem);
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   ACTIVE FILTER CHIPS
+   ========================================================= */
+
+.product-list .product-filter-chips {
+  display: flex;
+
+  align-items: center;
+
+  gap: var(--space-2, 0.5rem);
+
+  padding-block:
+    var(--space-3, 0.75rem);
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+}
+
+.product-list
+  .product-filter-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.product-list .product-filter-chip {
+  display: inline-flex;
+
+  flex: 0 0 auto;
+
+  min-height: 2rem;
+
+  align-items: center;
+
+  gap: var(--space-2, 0.5rem);
+
+  padding:
+    var(--space-1, 0.25rem)
+    var(--space-3, 0.75rem);
+
+  border:
+    1px solid
+    var(--color-border, #d7e1e5);
+
+  border-radius:
+    var(--radius-full, 9999px);
+
+  background-color:
+    var(--color-surface, #fff);
+
+  color:
+    var(--color-text, #15252c);
+
+  font: inherit;
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
+
+  white-space: nowrap;
+
+  cursor: pointer;
+}
+
+.product-list .product-filter-chip:hover {
+  border-color:
+    var(--color-primary, #1976d2);
+}
+
+.product-list .product-filter-chip:focus-visible {
+  outline:
+    3px solid
+    var(--color-focus, #1769aa);
+
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   MOBILE ACTIONS
+   Hidden on desktop/tablet
+   ========================================================= */
+
+.product-list .product-mobile-actions {
+  display: none;
+}
+
+/* =========================================================
+   PRODUCT LIST CONTENT
    ========================================================= */
 
 .product-list .product-list-content {
@@ -295,8 +570,7 @@
 }
 
 /* =========================================================
-   PRODUCT ITEMS
-   DESKTOP
+   PRODUCT ITEMS: DESKTOP
    ========================================================= */
 
 .product-list .product-items {
@@ -321,6 +595,49 @@
 }
 
 /* =========================================================
+   LOADING STATE
+   ========================================================= */
+
+.product-list .product-loading {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: var(--product-grid-gap);
+}
+
+.product-list .product-loading-card {
+  min-height: 24rem;
+
+  border-radius:
+    var(--radius-md, 0.625rem);
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--color-neutral-50, #f5f8fa) 25%,
+      var(--color-neutral-100, #e8eef1) 50%,
+      var(--color-neutral-50, #f5f8fa) 75%
+    );
+
+  background-size: 200% 100%;
+
+  animation:
+    product-loading-shimmer 1.4s infinite;
+}
+
+@keyframes product-loading-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* =========================================================
    EMPTY STATE
    ========================================================= */
 
@@ -328,13 +645,93 @@
   margin: 0;
 
   padding:
-    var(--space-10, 2.5rem)
+    var(--space-12, 3rem)
     var(--space-6, 1.5rem);
 
   color:
     var(--color-text-muted, #657780);
 
   text-align: center;
+}
+
+.product-list .product-empty h2 {
+  margin:
+    0
+    0
+    var(--space-2, 0.5rem);
+
+  color:
+    var(--color-text, #15252c);
+
+  font-size:
+    var(--heading-font-size-s, 1.25rem);
+}
+
+.product-list .product-empty p {
+  margin: 0;
+}
+
+/* =========================================================
+   FILTER DIALOG
+   ========================================================= */
+
+.product-list .product-filter-dialog {
+  width: min(26rem, calc(100% - 2rem));
+  max-height: calc(100vh - 2rem);
+
+  padding: 0;
+
+  border: 0;
+
+  border-radius:
+    var(--radius-lg, 0.75rem);
+
+  background-color:
+    var(--color-surface, #fff);
+
+  color:
+    var(--color-text, #15252c);
+}
+
+.product-list .product-filter-dialog::backdrop {
+  background-color:
+    rgb(0 0 0 / 55%);
+}
+
+.product-list .product-filter-dialog-header {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-3, 0.75rem);
+
+  padding: var(--space-4, 1rem);
+
+  border-bottom:
+    1px solid
+    var(--color-border, #d7e1e5);
+}
+
+.product-list .product-filter-dialog-content {
+  max-height: calc(100vh - 10rem);
+
+  overflow-y: auto;
+}
+
+.product-list .product-filter-dialog-footer {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: var(--space-3, 0.75rem);
+
+  padding: var(--space-4, 1rem);
+
+  border-top:
+    1px solid
+    var(--color-border, #d7e1e5);
 }
 
 /* =========================================================
@@ -345,7 +742,10 @@
 @media (max-width: 1199px) {
   .product-list {
     --product-filter-width: 14rem;
-    --product-grid-gap: var(--space-4, 1rem);
+    --product-grid-gap:
+      var(--space-4, 1rem);
+    --product-content-padding:
+      var(--space-4, 1rem);
   }
 
   .product-list .product-filter-header,
@@ -354,21 +754,23 @@
       var(--space-4, 1rem);
   }
 
-  .product-list .product-right {
-    padding:
-      0
-      var(--space-4, 1rem)
-      var(--space-4, 1rem);
-  }
-
-  .product-list .product-items {
-    grid-template-columns:
-      repeat(3, minmax(0, 1fr));
+  .product-list .product-header {
+    gap: var(--space-4, 1rem);
   }
 
   .product-list .product-header h1 {
     font-size:
       var(--heading-font-size-s, 1.25rem);
+  }
+
+  .product-list .product-sort select {
+    min-width: 10rem;
+  }
+
+  .product-list .product-items,
+  .product-list .product-loading {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -381,6 +783,9 @@
   .product-list {
     --product-grid-gap:
       var(--space-3, 0.75rem);
+
+    --product-content-padding:
+      var(--space-3, 0.75rem);
   }
 
   .product-list .product-list-wrapper {
@@ -388,11 +793,8 @@
   }
 
   /*
-   * Desktop sidebar becomes hidden.
-   *
-   * The mobile implementation should expose
-   * the same filters inside a Filter button/
-   * drawer or dialog.
+   * Hide desktop filter sidebar.
+   * Filters remain available through dialog.
    */
   .product-list .product-left {
     display: none;
@@ -403,7 +805,7 @@
 
     padding:
       0
-      var(--space-3, 0.75rem)
+      var(--product-content-padding)
       var(--space-4, 1rem);
   }
 
@@ -423,32 +825,89 @@
       var(--body-font-size-m, 1.125rem);
   }
 
-  .product-list .product-header p {
-    font-size:
-      var(--body-font-size-xs, 0.875rem);
-  }
-
   .product-list .product-sort {
-    flex-direction: column;
-
-    align-items: flex-end;
-
-    gap: var(--space-1, 0.25rem);
+    display: none;
   }
 
-  .product-list .product-sort select {
-    min-width: 7.5rem;
+  .product-list .product-toolbar {
+    display: none;
+  }
 
-    min-height: 2.25rem;
+  /*
+   * Filter and sort controls remain visible
+   * on mobile.
+   */
+  .product-list .product-mobile-actions {
+    display: grid;
+
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 0;
+
+    margin-inline:
+      calc(var(--product-content-padding) * -1);
+
+    border-top:
+      1px solid
+      var(--color-border, #d7e1e5);
+
+    border-bottom:
+      1px solid
+      var(--color-border, #d7e1e5);
+  }
+
+  .product-list .product-mobile-action {
+    display: inline-flex;
+
+    min-height: 3rem;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: var(--space-2, 0.5rem);
 
     padding:
-      var(--space-1, 0.25rem)
-      var(--space-6, 1.5rem)
-      var(--space-1, 0.25rem)
-      var(--space-2, 0.5rem);
+      var(--space-2, 0.5rem)
+      var(--space-3, 0.75rem);
 
+    border: 0;
+
+    background-color:
+      var(--color-surface, #fff);
+
+    color:
+      var(--color-text, #15252c);
+
+    font: inherit;
     font-size:
       var(--body-font-size-xs, 0.875rem);
+
+    font-weight: 600;
+
+    cursor: pointer;
+  }
+
+  .product-list
+    .product-mobile-action
+    + .product-mobile-action {
+    border-left:
+      1px solid
+      var(--color-border, #d7e1e5);
+  }
+
+  .product-list
+    .product-mobile-action:focus-visible {
+    outline:
+      3px solid
+      var(--color-focus, #1769aa);
+
+    outline-offset: -3px;
+  }
+
+  .product-list .product-filter-chips {
+    padding-block:
+      var(--space-2, 0.5rem);
   }
 
   .product-list .product-list-content {
@@ -457,12 +916,36 @@
   }
 
   /*
-   * Two products per row,
-   * matching common mobile commerce PLPs.
+   * Two products per row.
    */
-  .product-list .product-items {
+  .product-list .product-items,
+  .product-list .product-loading {
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
+  }
+
+  .product-list .product-loading-card {
+    min-height: 18rem;
+  }
+
+  /*
+   * Bottom-sheet style filter dialog.
+   */
+  .product-list .product-filter-dialog {
+    width: 100%;
+    max-width: none;
+    max-height: 90vh;
+
+    margin:
+      auto
+      0
+      0;
+
+    border-radius:
+      var(--radius-lg, 0.75rem)
+      var(--radius-lg, 0.75rem)
+      0
+      0;
   }
 }
 
@@ -472,19 +955,27 @@
    ========================================================= */
 
 @media (max-width: 359px) {
-  .product-list .product-right {
-    padding-inline:
+  .product-list {
+    --product-grid-gap:
+      var(--space-2, 0.5rem);
+
+    --product-content-padding:
       var(--space-2, 0.5rem);
   }
 
+  .product-list .product-header h1 {
+    font-size:
+      var(--body-font-size-s, 1rem);
+  }
+
   /*
-   * Keep two columns where possible.
-   * Product card CSS should reduce its
-   * internal spacing at this breakpoint.
+   * Keep two columns for the commerce layout.
+   * Product-card CSS should use compact spacing.
    */
-  .product-list .product-items {
-    gap:
-      var(--space-2, 0.5rem);
+  .product-list .product-items,
+  .product-list .product-loading {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -496,6 +987,11 @@
   .product-list *,
   .product-list *::before,
   .product-list *::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+
     scroll-behavior: auto;
+
+    transition-duration: 0.01ms;
   }
 }
