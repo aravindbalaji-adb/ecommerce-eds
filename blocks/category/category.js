@@ -1,21 +1,88 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
-import { applyButtonStyles } from '../button/button.js';
+import { createOptimizedPicture } from "../../scripts/aem.js";
+import { createButton, applyButtonStyles } from "../button/button.js";
 
-const CATEGORY_TYPE = 'category';
+const CATEGORY_TYPE = "category";
 
 /**
- * Creates previous/next arrow icon.
+ * Creates a category item using the existing Button structure.
  *
- * @param {'previous'|'next'} direction Arrow direction
- * @returns {SVGElement}
+ * @param {Object} category Category data
+ * @returns {HTMLLIElement|null}
  */
-function createArrowIcon(direction) {
-  const namespace = 'http://www.w3.org/2000/svg';
+function createCategoryItem(category) {
+  const {
+    id,
+    title = '',
+    'image-url': imageUrl = '',
+  } = category;
 
+  if (!title && !imageUrl) {
+    return null;
+  }
+
+  const item = document.createElement('li');
+  item.className = 'category-item';
+
+  /*
+   * Mobiles -> mobiles
+   * Small Appliances -> small-appliances
+   * Air Conditioners -> air-conditioners
+   */
+  const slug = title
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+  const categoryUrl = `/category/${slug}`;
+
+  /*
+   * Reuse complete custom Button component.
+   */
+  const { wrapper, button } = createButton({
+    href: categoryUrl,
+    title: title || 'Category',
+    label: title,
+    iconSrc: imageUrl,
+    color: 'secondary',
+    variant: 'text',
+    size: 'md',
+  });
+
+  if (id !== undefined && id !== null) {
+    const categoryId = String(id);
+
+    item.dataset.categoryId = categoryId;
+    button.dataset.categoryId = categoryId;
+  }
+
+  /*
+   * Open category PLP in a new tab.
+   */
+  button.target = '_blank';
+  button.rel = 'noopener noreferrer';
+
+  item.append(wrapper);
+
+  return item;
+}
+
+/**
+ * Creates previous/next navigation
+ * using the existing Button structure.
+ *
+ * @param {'previous'|'next'} direction Direction
+ * @param {string} label Accessible label
+ * @param {string} iconName Icon name
+ * @returns {{
+ *   wrapper: HTMLParagraphElement,
+ *   button: HTMLAnchorElement
+ * }}
+ */
+function createNavigationIcon(direction) {
+  const namespace = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(namespace, 'svg');
   const path = document.createElementNS(namespace, 'path');
-
-  svg.classList.add('category-navigation-icon');
 
   svg.setAttribute('viewBox', '0 0 24 24');
   svg.setAttribute('aria-hidden', 'true');
@@ -33,366 +100,79 @@ function createArrowIcon(direction) {
   return svg;
 }
 
-/**
- * Creates category previous/next navigation button.
- *
- * Reuses shared button design system.
- *
- * @param {'previous'|'next'} direction Navigation direction
- * @param {string} label Accessible label
- * @returns {HTMLButtonElement}
- */
 function createNavigationButton(direction, label) {
-  const button = document.createElement('button');
-
-  button.type = 'button';
-
-  button.classList.add(
-    'category-navigation-button',
-    `category-navigation-${direction}`,
-  );
-
-  button.setAttribute('aria-label', label);
-
-  button.append(
-    createArrowIcon(direction),
-  );
-
-  applyButtonStyles(button, {
+  /*
+   * Reuse complete Button component.
+   */
+  const { wrapper, button } = createButton({
+    href: '#',
+    title: label,
+    label,
     color: 'secondary',
     variant: 'text',
-    size: 'sm',
+    size: 'md',
     iconOnly: true,
   });
 
-  return button;
-}
-
-/**
- * Creates optimized category image.
- *
- * @param {string} imageUrl Category image URL
- * @returns {HTMLElement|null}
- */
-function createCategoryImage(imageUrl) {
-  if (!imageUrl) {
-    return null;
-  }
-
-  const imageWrapper = document.createElement('span');
-
-  imageWrapper.className = 'category-item-image';
-
-  const picture = createOptimizedPicture(
-    imageUrl,
-    '',
-    false,
-    [
-      {
-        media: '(min-width: 1200px)',
-        width: '96',
-      },
-      {
-        media: '(min-width: 768px)',
-        width: '80',
-      },
-      {
-        width: '72',
-      },
-    ],
-  );
-
-  const image = picture.querySelector('img');
-
-  if (image) {
-    image.loading = 'lazy';
-    image.decoding = 'async';
-
-    /*
-     * Decorative image because category
-     * name is already displayed as text.
-     */
-    image.alt = '';
-  }
-
-  imageWrapper.append(picture);
-
-  return imageWrapper;
-}
-
-/**
- * Creates category text content.
- *
- * Empty elements are not rendered.
- *
- * @param {string} title Category title
- * @param {string} subtitle Category subtitle
- * @param {string} description Category description
- * @returns {HTMLElement|null}
- */
-function createCategoryContent(
-  title,
-  subtitle,
-  description,
-) {
-  if (!title && !subtitle && !description) {
-    return null;
-  }
-
-  const content = document.createElement('span');
-
-  content.className = 'category-item-content';
-
-  if (title) {
-    const titleElement = document.createElement('span');
-
-    titleElement.className = 'category-item-title';
-    titleElement.textContent = title;
-
-    content.append(titleElement);
-  }
-
-  if (subtitle) {
-    const subtitleElement = document.createElement('span');
-
-    subtitleElement.className = 'category-item-subtitle';
-    subtitleElement.textContent = subtitle;
-
-    content.append(subtitleElement);
-  }
-
-  if (description) {
-    const descriptionElement = document.createElement('span');
-
-    descriptionElement.className = 'category-item-description';
-    descriptionElement.textContent = description;
-
-    content.append(descriptionElement);
-  }
-
-  return content;
-}
-
-/**
- * Creates one category item.
- *
- * @param {Object} category Category JSON record
- * @returns {HTMLLIElement|null}
- */
-function createCategoryItem(category) {
-  const {
-    id,
-    title = '',
-    subtitle = '',
-    description = '',
-  } = category;
-
-  const imageUrl = category['image-url'] || '';
-
   /*
-   * Completely empty category should not render.
+   * Only Category-specific class.
    */
-  if (!title && !subtitle && !description && !imageUrl) {
-    return null;
-  }
-
-  const item = document.createElement('li');
-
-  item.className = 'category-item';
-
-  if (id !== undefined && id !== null) {
-    item.dataset.categoryId = String(id);
-  }
+  button.classList.add(direction);
 
   /*
-   * Category works as a selection/filter action.
-   * Keep semantic <button>.
+   * Get the existing Button icon container.
    *
-   * If category later navigates directly to PLP,
-   * change this to an <a href="...">.
+   * If createButton() didn't create .icon because
+   * no iconSrc was supplied, create only the slot.
    */
-  const button = document.createElement('button');
+  let icon = button.querySelector('.icon');
 
-  button.type = 'button';
-  button.className = 'category-item-button';
+  if (!icon) {
+    icon = document.createElement('span');
+    icon.className = 'icon';
 
-  if (id !== undefined && id !== null) {
-    button.dataset.categoryId = String(id);
-  }
-
-  if (title) {
-    button.setAttribute(
-      'aria-label',
-      `View ${title}`,
-    );
-  } else {
-    button.setAttribute(
-      'aria-label',
-      'View category',
-    );
+    button.prepend(icon);
   }
 
   /*
-   * Category image
+   * Add Category's SVG arrow into the existing
+   * Button icon slot.
    */
-  const image = createCategoryImage(imageUrl);
-
-  if (image) {
-    button.append(image);
-  }
-
-  /*
-   * Category textual content
-   */
-  const content = createCategoryContent(
-    title,
-    subtitle,
-    description,
+  icon.replaceChildren(
+    createNavigationIcon(direction),
   );
 
-  if (content) {
-    button.append(content);
-  }
+  icon.setAttribute(
+    'aria-hidden',
+    'true',
+  );
 
-  /*
-   * Don't render an empty button.
-   */
-  if (!button.children.length) {
-    return null;
-  }
-
-  item.append(button);
-
-  return item;
+  return {
+    wrapper,
+    button,
+  };
 }
 
 /**
- * Determines whether horizontal scrolling is available.
- *
- * @param {HTMLElement} list Category list
- * @returns {boolean}
- */
-function hasHorizontalOverflow(list) {
-  return list.scrollWidth > list.clientWidth + 2;
-}
-
-/**
- * Updates previous/next navigation state.
- *
- * @param {HTMLElement} list Category list
- * @param {HTMLButtonElement} previousButton Previous button
- * @param {HTMLButtonElement} nextButton Next button
- */
-function updateNavigationState(
-  list,
-  previousButton,
-  nextButton,
-) {
-  const tolerance = 2;
-
-  const maxScrollLeft = Math.max(
-    0,
-    list.scrollWidth - list.clientWidth,
-  );
-
-  const isAtStart =
-    list.scrollLeft <= tolerance;
-
-  const isAtEnd =
-    list.scrollLeft >= maxScrollLeft - tolerance;
-
-  const hasOverflow =
-    hasHorizontalOverflow(list);
-
-  previousButton.disabled =
-    !hasOverflow || isAtStart;
-
-  nextButton.disabled =
-    !hasOverflow || isAtEnd;
-
-  previousButton.setAttribute(
-    'aria-disabled',
-    String(!hasOverflow || isAtStart),
-  );
-
-  nextButton.setAttribute(
-    'aria-disabled',
-    String(!hasOverflow || isAtEnd),
-  );
-
-  /*
-   * When all categories fit, navigation
-   * controls are unnecessary.
-   */
-  previousButton.hidden = !hasOverflow;
-  nextButton.hidden = !hasOverflow;
-}
-
-/**
- * Determines amount to scroll.
- *
- * @param {HTMLElement} list Category list
- * @returns {number}
- */
-function getScrollAmount(list) {
-  /*
-   * Scroll most of the visible viewport.
-   * This works better than using the width
-   * of the first item because category names
-   * have different widths.
-   */
-  return Math.max(
-    200,
-    list.clientWidth * 0.75,
-  );
-}
-
-/**
- * Scrolls category list.
- *
- * @param {HTMLElement} list Category list
- * @param {'previous'|'next'} direction Scroll direction
- */
-function scrollCategories(list, direction) {
-  const scrollAmount =
-    getScrollAmount(list);
-
-  const prefersReducedMotion =
-    window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
-
-  list.scrollBy({
-    left:
-      direction === 'previous'
-        ? -scrollAmount
-        : scrollAmount,
-
-    behavior:
-      prefersReducedMotion
-        ? 'auto'
-        : 'smooth',
-  });
-}
-
-/**
- * Loads JSON and returns only category records.
+ * Fetches category data.
  *
  * @param {string} url JSON endpoint
  * @returns {Promise<Object[]>}
  */
-async function loadCategories(url) {
+async function fetchCategories(url) {
   if (!url) {
     return [];
   }
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
 
     if (!response.ok) {
-      throw new Error(
-        `Category request failed: ${response.status}`,
-      );
+      throw new Error(`Category request failed: ${response.status}`);
     }
 
     const json = await response.json();
@@ -401,38 +181,27 @@ async function loadCategories(url) {
       return [];
     }
 
-    return json.data.filter((item) => {
-      const type =
-        typeof item.type === 'string'
-          ? item.type.trim().toLowerCase()
-          : '';
-
-      return type === CATEGORY_TYPE;
-    });
+    return json.data.filter(
+      (item) =>
+        typeof item.type === "string" &&
+        item.type.trim().toLowerCase() === CATEGORY_TYPE,
+    );
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(
-      'Unable to load categories.',
-      error,
-    );
+    console.error("Unable to load category data.", error);
 
     return [];
   }
 }
 
 /**
- * Gets JSON URL from authored Category block.
- *
- * Supports:
- * - Authored link
- * - Plain URL text
+ * Gets JSON URL from authored block.
  *
  * @param {HTMLElement} block Category block
  * @returns {string}
  */
 function getDataUrl(block) {
-  const link =
-    block.querySelector('a[href]');
+  const link = block.querySelector("a[href]");
 
   if (link?.href) {
     return link.href;
@@ -442,45 +211,107 @@ function getDataUrl(block) {
 }
 
 /**
+ * Checks horizontal overflow.
+ *
+ * @param {HTMLElement} list Category list
+ * @returns {boolean}
+ */
+function hasOverflow(list) {
+  return list.scrollWidth > list.clientWidth + 2;
+}
+
+/**
+ * Sets disabled state on anchor-based Button.
+ *
+ * @param {HTMLAnchorElement} button Button
+ * @param {boolean} disabled Disabled state
+ */
+function setDisabled(button, disabled) {
+  button.setAttribute("aria-disabled", String(disabled));
+
+  button.tabIndex = disabled ? -1 : 0;
+}
+
+/**
+ * Updates previous/next state.
+ *
+ * @param {HTMLElement} list Category list
+ * @param {Object} previous Previous control
+ * @param {Object} next Next control
+ */
+function updateNavigation(list, previous, next) {
+  const tolerance = 2;
+
+  const maxScroll = Math.max(0, list.scrollWidth - list.clientWidth);
+
+  const overflowing = hasOverflow(list);
+
+  const atStart = list.scrollLeft <= tolerance;
+
+  const atEnd = list.scrollLeft >= maxScroll - tolerance;
+
+  setDisabled(previous.button, !overflowing || atStart);
+
+  setDisabled(next.button, !overflowing || atEnd);
+
+  previous.wrapper.hidden = !overflowing;
+  next.wrapper.hidden = !overflowing;
+}
+
+/**
+ * Scrolls category list.
+ *
+ * @param {HTMLElement} list Category list
+ * @param {'previous'|'next'} direction Direction
+ */
+function scrollCategories(list, direction) {
+  const scrollAmount = Math.max(200, list.clientWidth * 0.75);
+
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  list.scrollBy({
+    left: direction === "previous" ? -scrollAmount : scrollAmount,
+
+    behavior: reducedMotion ? "auto" : "smooth",
+  });
+}
+
+/**
+ * Adds navigation action.
+ *
+ * @param {HTMLAnchorElement} button
+ * @param {HTMLElement} list
+ * @param {'previous'|'next'} direction
+ */
+function addNavigationAction(button, list, direction) {
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+
+    if (button.getAttribute("aria-disabled") === "true") {
+      return;
+    }
+
+    scrollCategories(list, direction);
+  });
+}
+
+/**
  * Renders empty state.
  *
- * @param {HTMLElement} block Category block
+ * @param {HTMLElement} block
  */
 function renderEmptyState(block) {
-  const message =
-    document.createElement('p');
+  const message = document.createElement("p");
 
-  message.className = 'category-empty';
-
-  message.textContent =
-    'No categories available.';
+  message.textContent = "No categories available.";
 
   block.replaceChildren(message);
 }
 
 /**
  * Decorates Category block.
- *
- * Expected JSON:
- *
- * {
- *   "data": [
- *     {
- *       "id": "11",
- *       "type": "category",
- *       "image-url": "...",
- *       "title": "Mobiles",
- *       "subtitle": "",
- *       "description": ""
- *     }
- *   ]
- * }
- *
- * Only records where:
- *
- * type === "category"
- *
- * are rendered.
  *
  * @param {HTMLElement} block Category block
  */
@@ -492,53 +323,41 @@ export default async function decorate(block) {
     return;
   }
 
-  /*
-   * Load category JSON.
-   */
-  const categories =
-    await loadCategories(dataUrl);
+  const categories = await fetchCategories(dataUrl);
+  console.log("categories: ", categories);
 
   if (!categories.length) {
     renderEmptyState(block);
     return;
   }
 
+  const wrapper = document.createElement("nav");
+
+  wrapper.className = "category-wrapper";
+
+  wrapper.setAttribute("aria-label", "Product categories");
+
   /*
-   * Semantic navigation landmark.
+   * Existing Button structure.
+   *
+   * Change these icon names only if your
+   * actual files have different names.
    */
-  const nav =
-    document.createElement('nav');
-
-  nav.className = 'category-navigation';
-
-  nav.setAttribute(
-    'aria-label',
-    'Product categories',
+  const previous = createNavigationButton(
+    "previous",
+    "Previous categories",
+    "previous",
   );
 
-  /*
-   * Previous navigation button.
-   */
-  const previousButton =
-    createNavigationButton(
-      'previous',
-      'Scroll to previous categories',
-    );
+  const next = createNavigationButton("next", "Next categories", "next");
 
-  /*
-   * Semantic category list.
-   */
-  const list =
-    document.createElement('ul');
+  const list = document.createElement("ul");
 
-  list.className = 'category-list';
+  list.className = "category-list";
 
-  /*
-   * Render category records.
-   */
   categories.forEach((category) => {
-    const item =
-      createCategoryItem(category);
+    console.log("category: ", category);
+    const item = createCategoryItem(category);
 
     if (item) {
       list.append(item);
@@ -550,148 +369,45 @@ export default async function decorate(block) {
     return;
   }
 
-  /*
-   * Next navigation button.
-   */
-  const nextButton =
-    createNavigationButton(
-      'next',
-      'Scroll to next categories',
-    );
+  addNavigationAction(previous.button, list, "previous");
 
-  /*
-   * Previous button action.
-   */
-  previousButton.addEventListener(
-    'click',
-    () => {
-      scrollCategories(
-        list,
-        'previous',
-      );
-    },
-  );
+  addNavigationAction(next.button, list, "next");
 
-  /*
-   * Next button action.
-   */
-  nextButton.addEventListener(
-    'click',
-    () => {
-      scrollCategories(
-        list,
-        'next',
-      );
-    },
-  );
+  wrapper.append(previous.wrapper, list, next.wrapper);
 
-  /*
-   * Keyboard support.
-   *
-   * ArrowLeft:
-   * scroll previous categories.
-   *
-   * ArrowRight:
-   * scroll next categories.
-   */
-  list.addEventListener(
-    'keydown',
-    (event) => {
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
+  block.replaceChildren(wrapper);
 
-        scrollCategories(
-          list,
-          'previous',
-        );
+  let animationFrame;
 
-        return;
-      }
-
-      if (event.key === 'ArrowRight') {
-        event.preventDefault();
-
-        scrollCategories(
-          list,
-          'next',
-        );
-      }
-    },
-  );
-
-  /*
-   * Update navigation state after
-   * touch, mouse or button scrolling.
-   */
-  let scrollFrame;
+  const update = () => {
+    updateNavigation(list, previous, next);
+  };
 
   list.addEventListener(
-    'scroll',
+    "scroll",
     () => {
-      window.cancelAnimationFrame(
-        scrollFrame,
-      );
+      window.cancelAnimationFrame(animationFrame);
 
-      scrollFrame =
-        window.requestAnimationFrame(
-          () => {
-            updateNavigationState(
-              list,
-              previousButton,
-              nextButton,
-            );
-          },
-        );
+      animationFrame = window.requestAnimationFrame(update);
     },
     {
       passive: true,
     },
   );
 
-  /*
-   * Build final semantic DOM.
-   */
-  nav.append(
-    previousButton,
-    list,
-    nextButton,
-  );
+  if ("ResizeObserver" in window) {
+    const resizeObserver = new ResizeObserver(() => {
+      window.cancelAnimationFrame(animationFrame);
 
-  block.replaceChildren(nav);
-
-  /*
-   * Use ResizeObserver instead of a global
-   * resize listener so this component reacts
-   * to its actual available width.
-   */
-  const resizeObserver =
-    new ResizeObserver(() => {
-      window.cancelAnimationFrame(
-        scrollFrame,
-      );
-
-      scrollFrame =
-        window.requestAnimationFrame(
-          () => {
-            updateNavigationState(
-              list,
-              previousButton,
-              nextButton,
-            );
-          },
-        );
+      animationFrame = window.requestAnimationFrame(update);
     });
 
-  resizeObserver.observe(nav);
+    resizeObserver.observe(wrapper);
+  } else {
+    window.addEventListener("resize", update, {
+      passive: true,
+    });
+  }
 
-  /*
-   * Initial navigation state after layout.
-   */
-  window.requestAnimationFrame(() => {
-    updateNavigationState(
-      list,
-      previousButton,
-      nextButton,
-    );
-  });
+  window.requestAnimationFrame(update);
 }

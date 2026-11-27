@@ -41,6 +41,7 @@ function decorateIcons(button) {
 }
 
 function decorateIconOnlyButton(button) {
+  console.log("button: ", button.classList.value);
   const existingAriaLabel =
     button.getAttribute('aria-label');
 
@@ -222,4 +223,108 @@ export default function decorate(block) {
       block,
     );
   });
+}
+
+
+/**
+ * Creates the standard design-system Button structure.
+ *
+ * Structure:
+ * p.button-wrapper
+ *   a.button
+ *     span.icon
+ *       img
+ *     span.button-label
+ *
+ * @param {Object} options Button options
+ * @returns {{
+ *   wrapper: HTMLParagraphElement,
+ *   button: HTMLAnchorElement
+ * }}
+ */
+export function createButton({
+  href = '#',
+  title = '',
+  label = '',
+  iconSrc = '',
+  iconName = '',
+  color = 'primary',
+  variant = 'contained',
+  size = 'md',
+  fullWidth = false,
+  iconOnly = false,
+} = {}) {
+  const wrapper = document.createElement('p');
+  const button = document.createElement('a');
+
+  wrapper.className = 'button-wrapper';
+
+  button.href = href;
+  button.title = title || label;
+
+  /*
+   * Icon
+   */
+  if (iconSrc) {
+    const icon = document.createElement('span');
+    const image = document.createElement('img');
+
+    icon.className = iconName
+      ? `icon icon-${iconName}`
+      : 'icon';
+
+    if (iconName) {
+      image.dataset.iconName = iconName;
+    }
+
+    image.src = iconSrc;
+    image.alt = '';
+    image.loading = 'lazy';
+    image.width = 16;
+    image.height = 16;
+
+    icon.append(image);
+    button.append(icon);
+  }
+
+  /*
+   * Icon-only:
+   * Do NOT render .button-label.
+   * Accessibility comes from aria-label.
+   */
+  if (iconOnly) {
+    const accessibleLabel = title || label;
+
+    if (accessibleLabel) {
+      button.setAttribute(
+        'aria-label',
+        accessibleLabel,
+      );
+    }
+  } else if (label) {
+    /*
+     * Normal buttons render visible label.
+     */
+    const buttonLabel = document.createElement('span');
+
+    buttonLabel.className = 'button-label';
+    buttonLabel.textContent = label;
+
+    button.append(buttonLabel);
+  }
+
+  applyButtonStyles(button, {
+    color,
+    variant,
+    size,
+    fullWidth,
+    iconOnly,
+  });
+
+  wrapper.append(button);
+
+  return {
+    wrapper,
+    button,
+  };
 }
