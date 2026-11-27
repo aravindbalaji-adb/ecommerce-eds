@@ -30,6 +30,7 @@ export default async function decorate(block) {
 
     products.forEach((product) => {
       const imageUrl = product?.['image-url'];
+      console.log("imageUrl: ", imageUrl);
       const productId = product?.ID;
       const productTitle = product?.Title;
 
