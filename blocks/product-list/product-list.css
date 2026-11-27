@@ -74,6 +74,8 @@
 
   min-height: 4.5rem;
 
+  margin: 0;
+
   padding:
     var(--space-4, 1rem)
     var(--space-5, 1.25rem);
@@ -81,10 +83,6 @@
   border-bottom:
     1px solid
     var(--color-border, #d7e1e5);
-}
-
-.product-list .product-filter-header h2 {
-  margin: 0;
 
   color: var(--color-text, #15252c);
 
@@ -551,7 +549,6 @@
 
 /* =========================================================
    MOBILE ACTIONS
-   Hidden on desktop/tablet
    ========================================================= */
 
 .product-list .product-mobile-actions {
@@ -592,6 +589,191 @@
 
   margin: 0;
   padding: 0;
+}
+
+/* =========================================================
+   PRODUCT CARD
+   ========================================================= */
+
+.product-list .product-card {
+  width: 100%;
+  min-width: 0;
+
+  margin: 0;
+}
+
+/* =========================================================
+   PRODUCT CARD MEDIA
+
+   Important:
+   Every product gets exactly the same image area.
+
+   46 / 57 matches the approximately
+   184 x 228 rendered product image ratio.
+   ========================================================= */
+
+.product-list .product-card-media {
+  position: relative;
+
+  width: 100%;
+  aspect-ratio: 46 / 57;
+
+  overflow: hidden;
+
+  background-color:
+    var(--color-surface, #fff);
+}
+
+.product-list .product-card-media > a {
+  display: flex;
+
+  width: 100%;
+  height: 100%;
+
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.product-list .product-card-media img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: 100%;
+
+  object-fit: contain;
+  object-position: center;
+}
+
+/* =========================================================
+   PRODUCT FALLBACK IMAGE
+
+   The fallback asset has whitespace around the internal icon.
+
+   We keep the same media container but visually enlarge only
+   the fallback image.
+
+   Real product images are NOT affected.
+   ========================================================= */
+
+.product-list
+  .product-card-media
+  img.product-card-image-fallback {
+  width: 115%;
+  height: 115%;
+
+  max-width: none;
+
+  flex: 0 0 auto;
+
+  object-fit: contain;
+  object-position: center;
+}
+
+/* =========================================================
+   PRODUCT BADGE
+   ========================================================= */
+
+.product-list .product-card-badge {
+  position: absolute;
+  z-index: 2;
+
+  top: var(--space-3, 0.75rem);
+  left: var(--space-3, 0.75rem);
+}
+
+/* =========================================================
+   PRODUCT WISHLIST
+   ========================================================= */
+
+.product-list .product-card-wishlist {
+  position: absolute;
+  z-index: 2;
+
+  top: var(--space-3, 0.75rem);
+  right: var(--space-3, 0.75rem);
+}
+
+/* =========================================================
+   PRODUCT CONTENT
+   ========================================================= */
+
+.product-list .product-card-content {
+  min-width: 0;
+
+  padding-top:
+    var(--space-3, 0.75rem);
+}
+
+.product-list .product-card-rating,
+.product-list .product-card-brand,
+.product-list .product-card-title,
+.product-list .product-card-subtitle,
+.product-list .product-card-stock {
+  margin:
+    0
+    0
+    var(--space-2, 0.5rem);
+}
+
+.product-list .product-card-title {
+  font-size:
+    var(--body-font-size-s, 1rem);
+
+  line-height: 1.4;
+}
+
+.product-list .product-card-title a {
+  color:
+    var(--color-text, #15252c);
+
+  text-decoration: none;
+}
+
+.product-list .product-card-title a:hover {
+  text-decoration: underline;
+}
+
+.product-list .product-card-pricing {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: baseline;
+
+  gap:
+    var(--space-1, 0.25rem)
+    var(--space-2, 0.5rem);
+}
+
+.product-list .product-card-price {
+  color:
+    var(--color-text, #15252c);
+
+  font-weight: 700;
+}
+
+.product-list .product-card-discount {
+  color:
+    var(--color-success, #168346);
+
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
+
+  font-weight: 600;
+}
+
+.product-list .product-card-stock {
+  color:
+    var(--color-error, #c62828);
+
+  font-size:
+    var(--body-font-size-xs, 0.875rem);
+
+  font-weight: 600;
 }
 
 /* =========================================================
@@ -654,7 +836,7 @@
   text-align: center;
 }
 
-.product-list .product-empty h2 {
+.product-list .product-empty h4 {
   margin:
     0
     0
@@ -742,8 +924,10 @@
 @media (max-width: 1199px) {
   .product-list {
     --product-filter-width: 14rem;
+
     --product-grid-gap:
       var(--space-4, 1rem);
+
     --product-content-padding:
       var(--space-4, 1rem);
   }
@@ -794,7 +978,7 @@
 
   /*
    * Hide desktop filter sidebar.
-   * Filters remain available through dialog.
+   * Filters remain available through mobile controls.
    */
   .product-list .product-left {
     display: none;
@@ -833,10 +1017,6 @@
     display: none;
   }
 
-  /*
-   * Filter and sort controls remain visible
-   * on mobile.
-   */
   .product-list .product-mobile-actions {
     display: grid;
 
@@ -924,6 +1104,28 @@
       repeat(2, minmax(0, 1fr));
   }
 
+  /*
+   * Maintain the same media ratio on mobile.
+   */
+  .product-list .product-card-media {
+    aspect-ratio: 46 / 57;
+  }
+
+  /*
+   * Slightly reduce fallback scaling on mobile.
+   */
+  .product-list
+    .product-card-media
+    img.product-card-image-fallback {
+    width: 110%;
+    height: 110%;
+  }
+
+  .product-list .product-card-content {
+    padding-top:
+      var(--space-2, 0.5rem);
+  }
+
   .product-list .product-loading-card {
     min-height: 18rem;
   }
@@ -968,14 +1170,17 @@
       var(--body-font-size-s, 1rem);
   }
 
-  /*
-   * Keep two columns for the commerce layout.
-   * Product-card CSS should use compact spacing.
-   */
   .product-list .product-items,
   .product-list .product-loading {
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
+  }
+
+  .product-list
+    .product-card-media
+    img.product-card-image-fallback {
+    width: 108%;
+    height: 108%;
   }
 }
 

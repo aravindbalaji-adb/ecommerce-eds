@@ -390,7 +390,7 @@ function createFilterOption({
       'product-filter-count';
 
     countElement.textContent =
-      `(${count})`;
+      `${count}`;
 
     wrapper.append(countElement);
   }
@@ -592,7 +592,7 @@ function createFilters(products) {
     'product-filter-header';
 
   const title =
-    document.createElement('h2');
+    document.createElement('h4');
 
   title.textContent = 'Filters';
 
@@ -719,27 +719,58 @@ function createSort() {
  * @param {Object} product Product
  * @returns {HTMLImageElement|null}
  */
+ const PRODUCT_FALLBACK_IMAGE =
+  '/assets/product-fallback.webp';
+
 function createProductImage(product) {
-  const imageUrl =
-    product['image-url'];
-
-  if (!imageUrl) {
-    return null;
-  }
-
   const image =
     document.createElement('img');
 
-  image.src = imageUrl;
+  const imageUrl =
+    String(
+      product['image-url'] || '',
+    ).trim();
+
+  const useFallback = !imageUrl;
+
+  image.src =
+    imageUrl
+    || PRODUCT_FALLBACK_IMAGE;
 
   image.alt =
     product['image-alt']
     || product.title
     || product.brand
-    || '';
+    || 'Product image';
 
   image.loading = 'lazy';
   image.decoding = 'async';
+
+  if (useFallback) {
+    image.classList.add(
+      'product-card-image-fallback',
+    );
+  }
+
+  image.addEventListener(
+    'error',
+    () => {
+      if (
+        image.classList.contains(
+          'product-card-image-fallback',
+        )
+      ) {
+        return;
+      }
+
+      image.src =
+        PRODUCT_FALLBACK_IMAGE;
+
+      image.classList.add(
+        'product-card-image-fallback',
+      );
+    },
+  );
 
   return image;
 }
@@ -1243,7 +1274,7 @@ function createEmptyResult() {
     'product-empty';
 
   const heading =
-    document.createElement('h2');
+    document.createElement('h4');
 
   heading.textContent =
     'No products found';
@@ -1465,7 +1496,7 @@ function renderBlockError(
     'product-empty';
 
   const heading =
-    document.createElement('h2');
+    document.createElement('h4');
 
   heading.textContent =
     'Products unavailable';
