@@ -25,21 +25,30 @@ export default async function decorate(block) {
       return;
     }
 
+    // Filter only Spotlight products
+    const spotlightProducts = products.filter(
+      (product) => product?.Type?.trim().toLowerCase() === 'spotlight',
+    );
+
+    if (!spotlightProducts.length) {
+      console.warn('Spot Light: No spotlight products found.');
+      return;
+    }
+
     const grid = document.createElement('div');
     grid.className = 'spot-light-grid';
 
-    products.forEach((product) => {
+    spotlightProducts.forEach((product) => {
       const imageUrl = product?.['image-url'];
-      console.log("imageUrl: ", imageUrl);
       const productId = product?.ID;
       const productTitle = product?.Title;
 
-      // Skip products without required data
       if (!imageUrl || !productId) return;
 
       const item = document.createElement('a');
       item.className = 'spot-light-item';
       item.href = `/products/${encodeURIComponent(productId)}`;
+
       item.setAttribute(
         'aria-label',
         productTitle ? `View ${productTitle}` : 'View product',
