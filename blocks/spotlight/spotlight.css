@@ -1,15 +1,15 @@
-.spot-light {
+.spotlight {
   width: 100%;
 }
 
-.spot-light .spot-light-grid {
+.spotlight .spotlight-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px;
   width: 100%;
 }
 
-.spot-light .spot-light-item {
+.spotlight .spotlight-item {
   display: block;
   width: 100%;
   min-width: 0;
@@ -19,7 +19,7 @@
   text-decoration: none;
 }
 
-.spot-light .spot-light-image {
+.spotlight .spotlight-image {
   display: block;
   width: 100%;
   height: auto;
@@ -30,7 +30,7 @@
  
 /* Tablet */
 @media (max-width: 1199px) {
-  .spot-light .spot-light-grid {
+  .spotlight .spotlight-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 20px;
   }
@@ -38,7 +38,7 @@
 
 /* Mobile */
 @media (max-width: 767px) {
-  .spot-light .spot-light-grid {
+  .spotlight .spotlight-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
   }
