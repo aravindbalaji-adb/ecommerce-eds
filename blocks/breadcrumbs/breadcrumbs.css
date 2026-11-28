@@ -39,7 +39,7 @@
 
   color: var(--color-text, #15252c);
 
-  font-size: var(--body-font-size-s, 1rem);
+  font-size: var(--body-font-size-sm, 1rem);
   font-weight: 600;
   line-height: 1.25;
 }

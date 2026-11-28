@@ -97,7 +97,7 @@ blockquote {
 
 code,
 pre {
-  font-size: var(--body-font-size-s);
+  font-size: var(--body-font-size-sm);
 }
 
 pre {

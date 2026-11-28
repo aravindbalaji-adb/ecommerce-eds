@@ -1,5 +1,16 @@
 import { createButton } from '../button/button.js';
 import { createSelect } from '../form-control/form-control.js';
+import {
+  EMPTY_ICON,
+  FILTER_ICON,
+  PRODUCT_FALLBACK_IMAGE,
+  STAR_ICON,
+} from '../../scripts/svg.js';
+import { loadCSS } from '../../scripts/aem.js';
+import { createPagination } from './pagination.js';
+import toNumber from './product-utils.js';
+import { createFilters, filterProducts } from './filters.js';
+
 const PRODUCT_TYPE = 'product';
 
 const SORT_OPTIONS = [
@@ -24,40 +35,6 @@ const SORT_OPTIONS = [
     label: 'Discount',
   },
 ];
-
-const PRICE_OPTIONS = [
-  {
-    value: '0-15000',
-    label: 'Under ₹15,000',
-  },
-  {
-    value: '15000-30000',
-    label: '₹15,000 - ₹30,000',
-  },
-  {
-    value: '30000-50000',
-    label: '₹30,000 - ₹50,000',
-  },
-  {
-    value: '50000+',
-    label: 'Above ₹50,000',
-  },
-];
-
-/**
- * Safely converts a value to a number.
- *
- * @param {*} value Value
- * @param {number} fallback Fallback value
- * @returns {number}
- */
-function toNumber(value, fallback = 0) {
-  const number = Number(value);
-
-  return Number.isFinite(number)
-    ? number
-    : fallback;
-}
 
 /**
  * Converts different boolean representations
@@ -111,7 +88,7 @@ function formatPrice(
       },
     ).format(price);
   } catch (error) {
-    return `₹${price.toLocaleString('en-IN')}`;
+    return `â‚¹${price.toLocaleString('en-IN')}`;
   }
 }
 
@@ -150,62 +127,6 @@ function formatLabel(value) {
       + part.slice(1)
     ))
     .join(' ');
-}
-
-/**
- * Gets unique non-empty product values.
- *
- * @param {Object[]} products Products
- * @param {string} property Property
- * @returns {string[]}
- */
-function getUniqueValues(
-  products,
-  property,
-) {
-  return [
-    ...new Set(
-      products
-        .map((product) => (
-          String(
-            product[property] || '',
-          ).trim()
-        ))
-        .filter(Boolean),
-    ),
-  ].sort(
-    (a, b) => (
-      a.localeCompare(
-        b,
-        undefined,
-        {
-          numeric: true,
-          sensitivity: 'base',
-        },
-      )
-    ),
-  );
-}
-
-/**
- * Counts products having a property value.
- *
- * @param {Object[]} products Products
- * @param {string} property Property
- * @param {string} value Value
- * @returns {number}
- */
-function getValueCount(
-  products,
-  property,
-  value,
-) {
-  return products.filter(
-    (product) => (
-      String(product[property] || '')
-      === String(value)
-    ),
-  ).length;
 }
 
 /**
@@ -349,337 +270,6 @@ function createIconButton(label, symbol) {
 }
 
 /**
- * Creates one filter option.
- *
- * @param {Object} config Configuration
- * @returns {HTMLLabelElement}
- */
-function createFilterOption({
-  type = 'checkbox',
-  name,
-  value,
-  label,
-  count,
-}) {
-  const wrapper =
-    document.createElement('label');
-
-  const input =
-    document.createElement('input');
-
-  const text =
-    document.createElement('span');
-
-  input.type = type;
-  input.name = name;
-  input.value = value;
-
-  text.textContent = label;
-
-  wrapper.append(
-    input,
-    text,
-  );
-
-  if (count) {
-    const countElement =
-      document.createElement('span');
-
-    countElement.className =
-      'product-filter-count';
-
-    countElement.textContent =
-      `(${count})`;
-
-    wrapper.append(countElement);
-  }
-
-  return wrapper;
-}
-
-/**
- * Creates filter fieldset.
- *
- * @param {string} title Title
- * @param {string} name Filter name
- * @returns {HTMLFieldSetElement}
- */
-function createFilterGroup(
-  title,
-  name,
-) {
-  const fieldset =
-    document.createElement('fieldset');
-
-  fieldset.className =
-    'product-filter';
-
-  fieldset.dataset.filterGroup =
-    name;
-
-  const legend =
-    document.createElement('legend');
-
-  legend.textContent = title;
-
-  fieldset.append(legend);
-
-  return fieldset;
-}
-
-/**
- * Creates a filter from a product property.
- *
- * @param {Object[]} products Products
- * @param {Object} config Configuration
- * @returns {HTMLFieldSetElement|null}
- */
-function createPropertyFilter(
-  products,
-  {
-    title,
-    name,
-    property = name,
-    type = 'checkbox',
-  },
-) {
-  const values =
-    getUniqueValues(
-      products,
-      property,
-    );
-
-  if (!values.length) {
-    return null;
-  }
-
-  const fieldset =
-    createFilterGroup(
-      title,
-      name,
-    );
-
-  values.forEach((value) => {
-    fieldset.append(
-      createFilterOption({
-        type,
-        name,
-        value,
-        label: value,
-        count: getValueCount(
-          products,
-          property,
-          value,
-        ),
-      }),
-    );
-  });
-
-  return fieldset;
-}
-
-/**
- * Creates price filter.
- *
- * @param {Object[]} products Products
- * @returns {HTMLFieldSetElement}
- */
-function createPriceFilter(products) {
-  const fieldset =
-    createFilterGroup(
-      'Price',
-      'price',
-    );
-
-  PRICE_OPTIONS.forEach((option) => {
-    const count =
-      products.filter((product) => (
-        matchesPrice(
-          product,
-          option.value,
-        )
-      )).length;
-
-    fieldset.append(
-      createFilterOption({
-        type: 'radio',
-        name: 'price',
-        value: option.value,
-        label: option.label,
-        count,
-      }),
-    );
-  });
-
-  return fieldset;
-}
-
-/**
- * Checks whether a product matches a price range.
- *
- * @param {Object} product Product
- * @param {string} priceFilter Price filter
- * @returns {boolean}
- */
-function matchesPrice(
-  product,
-  priceFilter,
-) {
-  if (!priceFilter) {
-    return true;
-  }
-
-  const price =
-    toNumber(product.price);
-
-  switch (priceFilter) {
-    case '0-15000':
-      return price < 15000;
-
-    case '15000-30000':
-      return (
-        price >= 15000
-        && price < 30000
-      );
-
-    case '30000-50000':
-      return (
-        price >= 30000
-        && price < 50000
-      );
-
-    case '50000+':
-      return price >= 50000;
-
-    default:
-      return true;
-  }
-}
-
-/**
- * Creates filters.
- *
- * @param {Object[]} products Products
- * @returns {{
- *   filters: HTMLFormElement,
- *   clearButton: HTMLButtonElement
- * }}
- */
-function createFilters(products) {
-  const filters = document.createElement('form');
-
-  filters.className = 'product-filters';
-
-  filters.setAttribute(
-    'aria-label',
-    'Product filters',
-  );
-
-  filters.addEventListener(
-    'submit',
-    (event) => {
-      event.preventDefault();
-    },
-  );
-
-  const header = document.createElement('div');
-
-  header.className = 'product-filter-header';
-
-  const title = document.createElement('h6');
-
-  title.textContent = 'Filters';
-
-  /*
-   * Reuse existing shared Button component.
-   */
-  const {
-    wrapper: clearButtonWrapper,
-    button: clearButton,
-  } = createButton({
-    href: '#',
-    title: 'Clear all filters',
-    label: 'Clear all',
-    color: 'secondary',
-    variant: 'text',
-    size: 'sm',
-  });
-
-  /*
-   * This is an action, not real navigation.
-   * Prevent href="#" behavior.
-   */
-  clearButton.addEventListener(
-    'click',
-    (event) => {
-      event.preventDefault();
-    },
-  );
-
-  header.append(
-    title,
-    clearButtonWrapper,
-  );
-
-  filters.append(header);
-
-  const groups = [
-    createPropertyFilter(
-      products,
-      {
-        title: 'Brand',
-        name: 'brand',
-      },
-    ),
-
-    createPriceFilter(products),
-
-    createPropertyFilter(
-      products,
-      {
-        title: 'Storage',
-        name: 'storage',
-      },
-    ),
-
-    createPropertyFilter(
-      products,
-      {
-        title: 'RAM',
-        name: 'ram',
-      },
-    ),
-
-    createPropertyFilter(
-      products,
-      {
-        title: 'Network',
-        name: 'network',
-      },
-    ),
-
-    createPropertyFilter(
-      products,
-      {
-        title: 'Color',
-        name: 'color',
-      },
-    ),
-  ];
-
-  groups
-    .filter(Boolean)
-    .forEach((group) => {
-      filters.append(group);
-    });
-
-  return {
-    filters,
-    clearButton,
-  };
-}
-
-/**
  * Creates sorting control.
  *
  * @returns {{
@@ -729,62 +319,45 @@ function createSort() {
  * @param {Object} product Product
  * @returns {HTMLImageElement|null}
  */
-const PRODUCT_FALLBACK_IMAGE =
-  '/assets/product-fallback.webp';
+function createProductImageFallback(label) {
+  const fallback = document.createElement('span');
+
+  fallback.className = 'product-card-image-fallback';
+  fallback.setAttribute('role', 'img');
+  fallback.setAttribute('aria-label', label);
+  fallback.style.setProperty(
+    '--product-fallback-icon',
+    `url("${PRODUCT_FALLBACK_IMAGE}")`,
+  );
+
+  return fallback;
+}
 
 function createProductImage(product) {
-  const image =
-    document.createElement('img');
-
-  const imageUrl =
-    String(
-      product['image-url'] || '',
-    ).trim();
-
-  const useFallback = !imageUrl;
-
-  image.src =
-    imageUrl
-    || PRODUCT_FALLBACK_IMAGE;
-
-  image.alt =
-    product['image-alt']
+  const label = product['image-alt']
     || product.title
     || product.brand
     || 'Product image';
 
+  const imageUrl = String(product['image-url'] || '').trim();
+
+  if (!imageUrl) {
+    return createProductImageFallback(label);
+  }
+
+  const image = document.createElement('img');
+
+  image.src = imageUrl;
+  image.alt = label;
   image.loading = 'lazy';
   image.decoding = 'async';
 
-  if (useFallback) {
-    image.classList.add(
-      'product-card-image-fallback',
-    );
-  }
-
-  image.addEventListener(
-    'error',
-    () => {
-      if (
-        image.classList.contains(
-          'product-card-image-fallback',
-        )
-      ) {
-        return;
-      }
-
-      image.src =
-        PRODUCT_FALLBACK_IMAGE;
-
-      image.classList.add(
-        'product-card-image-fallback',
-      );
-    },
-  );
+  image.addEventListener('error', () => {
+    image.replaceWith(createProductImageFallback(label));
+  }, { once: true });
 
   return image;
 }
-
 /**
  * Creates a product link.
  *
@@ -795,9 +368,24 @@ function createProductLink(product) {
   const link =
     document.createElement('a');
 
-  link.href =
-    product['product-url']
-    || '#';
+  // Build /{category}/p/{id} from category-url and id, e.g. /mobiles/p/PRD-001
+  let categorySlug = '';
+  const categoryUrl = product['category-url'];
+
+  if (categoryUrl) {
+    try {
+      const url = new URL(categoryUrl, window.location.origin);
+      categorySlug = url.searchParams.get('category')
+        || url.pathname.split('/').filter(Boolean).pop()
+        || '';
+    } catch (e) {
+      categorySlug = '';
+    }
+  }
+
+  link.href = (categorySlug && product.id)
+    ? `/${categorySlug}/p/${encodeURIComponent(product.id)}`
+    : (product['product-url'] || '#');
 
   return link;
 }
@@ -838,7 +426,11 @@ function createRating(product) {
     'true',
   );
 
-  star.textContent = '★';
+  star.className = 'product-card-rating-star';
+  star.style.setProperty(
+    '--product-star-icon',
+    `url("${STAR_ICON}")`,
+  );
 
   const value =
     document.createElement('span');
@@ -847,16 +439,17 @@ function createRating(product) {
     String(product.rating);
 
   rating.append(
-    star,
     value,
+    star,
   );
 
   if (product.reviews) {
     const reviews =
       document.createElement('span');
 
+    reviews.className = 'product-card-rating-count';
     reviews.textContent =
-      `(${product.reviews})`;
+      String(product.reviews);
 
     rating.append(reviews);
   }
@@ -942,7 +535,7 @@ function createWishlistButton(product) {
   const button =
     createIconButton(
       `Add ${product.title || 'product'} to wishlist`,
-      '♡',
+      'â™¡',
     );
 
   button.className =
@@ -977,7 +570,7 @@ function createWishlistButton(product) {
       );
 
       button.textContent =
-        nextState ? '♥' : '♡';
+        nextState ? 'â™¥' : 'â™¡';
     },
   );
 
@@ -1004,7 +597,22 @@ function createProductCard(product) {
     'product-card';
 
   /*
-   * Media.
+   * Product link wraps the complete
+   * navigational card content.
+   */
+  const cardLink =
+    createProductLink(product);
+
+  cardLink.className =
+    'product-card-link';
+
+  cardLink.setAttribute(
+    'aria-label',
+    `View ${product.title || 'product'}`,
+  );
+
+  /*
+   * Media
    */
   const media =
     document.createElement('div');
@@ -1016,16 +624,7 @@ function createProductCard(product) {
     createProductImage(product);
 
   if (image) {
-    const link =
-      createProductLink(product);
-
-    link.setAttribute(
-      'aria-label',
-      `View ${product.title || 'product'}`,
-    );
-
-    link.append(image);
-    media.append(link);
+    media.append(image);
   }
 
   if (product.badge) {
@@ -1041,17 +640,8 @@ function createProductCard(product) {
     media.append(badge);
   }
 
-  const wishlist =
-    createWishlistButton(product);
-
-  if (wishlist) {
-    media.append(wishlist);
-  }
-
-  article.append(media);
-
   /*
-   * Content.
+   * Content
    */
   const content =
     document.createElement('div');
@@ -1086,13 +676,9 @@ function createProductCard(product) {
     title.className =
       'product-card-title';
 
-    const link =
-      createProductLink(product);
-
-    link.textContent =
+    title.textContent =
       product.title;
 
-    title.append(link);
     content.append(title);
   }
 
@@ -1131,86 +717,31 @@ function createProductCard(product) {
     content.append(stock);
   }
 
-  article.append(content);
+  /*
+   * Image + content are both
+   * inside the navigation link.
+   */
+  cardLink.append(
+    media,
+    content,
+  );
+
+  article.append(cardLink);
+
+  /*
+   * Wishlist MUST stay outside
+   * the product link.
+   */
+  const wishlist =
+    createWishlistButton(product);
+
+  if (wishlist) {
+    article.append(wishlist);
+  }
+
   item.append(article);
 
   return item;
-}
-
-/**
- * Collects selected filter values.
- *
- * @param {HTMLElement} filters Filters
- * @returns {Object}
- */
-function getSelectedFilters(filters) {
-  return [
-    ...filters.querySelectorAll(
-      'input:checked',
-    ),
-  ].reduce(
-    (state, input) => {
-      if (!state[input.name]) {
-        state[input.name] = [];
-      }
-
-      state[input.name].push(
-        input.value,
-      );
-
-      return state;
-    },
-    {},
-  );
-}
-
-/**
- * Applies selected filters.
- *
- * @param {Object[]} products Products
- * @param {HTMLElement} filters Filters
- * @returns {Object[]}
- */
-function filterProducts(
-  products,
-  filters,
-) {
-  const selected =
-    getSelectedFilters(filters);
-
-  const properties = [
-    'brand',
-    'storage',
-    'ram',
-    'network',
-    'color',
-  ];
-
-  return products.filter((product) => {
-    const matchesProperties =
-      properties.every((property) => {
-        const values =
-          selected[property];
-
-        return (
-          !values?.length
-          || values.includes(
-            String(
-              product[property] || '',
-            ),
-          )
-        );
-      });
-
-    if (!matchesProperties) {
-      return false;
-    }
-
-    return matchesPrice(
-      product,
-      selected.price?.[0],
-    );
-  });
 }
 
 /**
@@ -1275,16 +806,26 @@ function sortProducts(
  *
  * @returns {HTMLElement}
  */
-function createEmptyResult() {
+function createEmptyResult(onClear) {
   const wrapper =
     document.createElement('div');
 
   wrapper.className =
     'product-empty';
 
+  const icon =
+    document.createElement('span');
+
+  icon.className = 'product-empty-icon';
+  icon.setAttribute('aria-hidden', 'true');
+  icon.style.setProperty(
+    '--product-empty-icon',
+    `url("${EMPTY_ICON}")`,
+  );
+
   const heading =
     document.createElement('h4');
-
+  heading.className = "empty-title"
   heading.textContent =
     'No products found';
 
@@ -1294,10 +835,36 @@ function createEmptyResult() {
   message.textContent =
     'Try clearing or changing the selected filters.';
 
+  message.className = 'empty-description'
   wrapper.append(
+    icon,
     heading,
     message,
   );
+
+  if (onClear) {
+    const {
+      wrapper: clearWrapper,
+      button: clear,
+    } = createButton({
+      href: '#',
+      title: 'Clear all filters',
+      label: 'Clear all filters',
+      color: 'accent',
+      size: 'sm',
+      variant: 'outlined',
+    });
+
+    clear.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault();
+        onClear();
+      },
+    );
+
+    wrapper.append(clearWrapper);
+  }
 
   return wrapper;
 }
@@ -1307,16 +874,19 @@ function createEmptyResult() {
  *
  * @param {HTMLElement} list List
  * @param {Object[]} products Products
+ * @param {Function} onClear Clears filters
  */
-function renderProducts(list, products) {
+function renderProducts(list, products, onClear) {
   list.replaceChildren();
 
   if (!products.length) {
     const item =
       document.createElement('li');
 
+    item.className = 'product-empty-item';
+
     item.append(
-      createEmptyResult(),
+      createEmptyResult(onClear),
     );
 
     list.append(item);
@@ -1386,7 +956,7 @@ function createFilterChips(
         || input.value;
 
       button.textContent =
-        `${label} ×`;
+        `${label}`;
 
       button.setAttribute(
         'aria-label',
@@ -1417,7 +987,7 @@ function createFilterChips(
  * @returns {{
  *   wrapper: HTMLElement,
  *   filterButton: HTMLButtonElement,
- *   sortButton: HTMLButtonElement
+ *   sortSelect: HTMLSelectElement
  * }}
  */
 function createMobileActions() {
@@ -1427,35 +997,44 @@ function createMobileActions() {
   wrapper.className =
     'product-mobile-actions';
 
-  const filterButton =
-    document.createElement('button');
+  const {
+    wrapper: filterButtonWrapper,
+    button: filterButton,
+  } = createButton({
+    href: '#',
+    title: 'Filter products',
+    label: 'Filter',
+    iconSrc: FILTER_ICON,
+    color: 'accent',
+    variant: 'outlined',
+    fullWidth: true,
+  });
 
-  filterButton.type = 'button';
-  filterButton.className =
-    'product-mobile-action';
+  filterButton.addEventListener(
+    'click',
+    (event) => {
+      event.preventDefault();
+    },
+  );
 
-  filterButton.textContent =
-    'Filter';
-
-  const sortButton =
-    document.createElement('button');
-
-  sortButton.type = 'button';
-  sortButton.className =
-    'product-mobile-action';
-
-  sortButton.textContent =
-    'Sort';
+  const {
+    wrapper: sortWrapper,
+    select: sortSelect,
+  } = createSelect({
+    ariaLabel: 'Sort by',
+    options: SORT_OPTIONS,
+    fullWidth: true,
+  });
 
   wrapper.append(
-    filterButton,
-    sortButton,
+    filterButtonWrapper,
+    sortWrapper,
   );
 
   return {
     wrapper,
     filterButton,
-    sortButton,
+    sortSelect,
   };
 }
 
@@ -1554,6 +1133,7 @@ export default async function decorate(block) {
   const allProducts =
     await fetchProducts(jsonUrl);
 
+  console.log("allProducts: ", allProducts);
   if (!allProducts.length) {
     renderBlockError(
       block,
@@ -1605,9 +1185,37 @@ export default async function decorate(block) {
   const {
     filters,
     clearButton,
+    closeButton,
   } = createFilters(products);
 
-  left.append(filters);
+  const {
+    wrapper: applyButtonWrapper,
+    button: applyButton,
+  } = createButton({
+    href: '#',
+    title: 'Show results',
+    label: 'Show products',
+    color: 'primary',
+    fullWidth: true,
+  });
+
+  const applyLabel =
+    applyButton.querySelector(
+      '.button-label',
+    );
+
+  const filterFooter =
+    document.createElement('div');
+
+  filterFooter.className =
+    'product-filter-footer';
+
+  filterFooter.append(applyButtonWrapper);
+
+  left.append(
+    filters,
+    filterFooter,
+  );
 
   /*
    * Right content.
@@ -1674,8 +1282,13 @@ export default async function decorate(block) {
   const {
     wrapper: mobileActions,
     filterButton,
-    sortButton,
+    sortSelect: mobileSortSelect,
   } = createMobileActions();
+
+  const filterLabel =
+    filterButton.querySelector(
+      '.button-label',
+    );
 
   const productList =
     document.createElement('div');
@@ -1689,7 +1302,19 @@ export default async function decorate(block) {
   productItems.className =
     'product-items';
 
-  productList.append(productItems);
+  loadCSS(
+    `${window.hlx?.codeBasePath || ''}/blocks/product-list/pagination.css`,
+  );
+
+  const pagination = createPagination({
+    pageSize: 5,
+    onChange: () => {
+      update({ keepPage: true });
+      productList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+  });
+
+  productList.append(productItems, pagination.element);
 
   right.append(
     header,
@@ -1705,7 +1330,13 @@ export default async function decorate(block) {
 
   let filterChips;
 
-  function update() {
+  function update(options) {
+    if (options?.keepPage !== true) {
+      pagination.setPage(1);
+    }
+
+    mobileSortSelect.value =
+      sortSelect.value;
     let result =
       filterProducts(
         products,
@@ -1724,12 +1355,45 @@ export default async function decorate(block) {
         : 'products'
       }`;
 
+    applyLabel.textContent =
+      result.length
+        ? `Show ${result.length} ${result.length === 1
+          ? 'product'
+          : 'products'
+        }`
+        : 'No products found';
+
+    applyButton.setAttribute(
+      'aria-disabled',
+      String(!result.length),
+    );
+
+    const activeCount =
+      filters.querySelectorAll(
+        'input:checked',
+      ).length;
+
+    filterLabel.textContent =
+      activeCount
+        ? `Filter (${activeCount})`
+        : 'Filter';
+
+    pagination.update(result.length);
+
     renderProducts(
       productItems,
-      result,
+      pagination.slice(result),
+      () => clearButton.click(),
     );
 
     filterChips?.render();
+
+    updateQueryParameter(
+      'page',
+      pagination.getPage() > 1
+        ? String(pagination.getPage())
+        : '',
+    );
 
     updateQueryParameter(
       'sort',
@@ -1810,56 +1474,79 @@ export default async function decorate(block) {
     'false',
   );
 
+  function setFiltersOpen(open) {
+    block.classList.toggle(
+      'filters-open',
+      open,
+    );
+
+    document.body.style.overflow =
+      open ? 'hidden' : '';
+
+    filterButton.setAttribute(
+      'aria-expanded',
+      String(open),
+    );
+
+    if (open) {
+      closeButton.focus();
+    } else {
+      filterButton.focus();
+    }
+  }
+
   filterButton.addEventListener(
     'click',
     () => {
-      const open =
-        block.classList.toggle(
+      setFiltersOpen(
+        !block.classList.contains(
           'filters-open',
-        );
-
-      filterButton.setAttribute(
-        'aria-expanded',
-        String(open),
+        ),
       );
+    },
+  );
 
-      if (open) {
-        left
-          .querySelector(
-            'input, button',
-          )
-          ?.focus();
+  closeButton.addEventListener(
+    'click',
+    () => setFiltersOpen(false),
+  );
+
+  applyButton.addEventListener(
+    'click',
+    (event) => {
+      event.preventDefault();
+
+      if (
+        applyButton.getAttribute(
+          'aria-disabled',
+        ) !== 'true'
+      ) {
+        setFiltersOpen(false);
       }
     },
   );
 
-  /*
-   * Mobile sort cycles through options.
-   * It avoids creating a second select
-   * with duplicated state.
-   */
-  sortButton.addEventListener(
+  // The backdrop is the block's ::before, so clicks land on the block.
+  block.addEventListener(
     'click',
+    (event) => {
+      if (
+        event.target === block
+        && block.classList.contains(
+          'filters-open',
+        )
+      ) {
+        setFiltersOpen(false);
+      }
+    },
+  );
+
+  // Mobile and desktop selects share state through update().
+  mobileSortSelect.addEventListener(
+    'change',
     () => {
-      const currentIndex =
-        SORT_OPTIONS.findIndex(
-          (option) => (
-            option.value
-            === sortSelect.value
-          ),
-        );
-
-      const nextIndex =
-        (
-          currentIndex + 1
-        ) % SORT_OPTIONS.length;
-
       sortSelect.value =
-        SORT_OPTIONS[nextIndex].value;
-
-      sortButton.textContent =
-        `Sort: ${SORT_OPTIONS[nextIndex].label
-        }`;
+        mobileSortSelect.value;
 
       update();
     },
@@ -1877,19 +1564,18 @@ export default async function decorate(block) {
           'filters-open',
         )
       ) {
-        block.classList.remove(
-          'filters-open',
-        );
-
-        filterButton.setAttribute(
-          'aria-expanded',
-          'false',
-        );
-
-        filterButton.focus();
+        setFiltersOpen(false);
       }
     },
   );
 
-  update();
+  const queryPage = Number(searchParams.get('page'));
+
+  if (queryPage > 1) {
+    pagination.setPage(queryPage);
+  }
+
+  update({ keepPage: true });
 }
+
+

@@ -1,0 +1,84 @@
+.product-list .pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4, 1rem);
+  padding-block: var(--space-6, 1.5rem);
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+.product-list .pagination[hidden] {
+  display: none;
+}
+
+.product-list .pagination-summary {
+  margin: 0;
+  color: var(--color-text, #15252c);
+  font-size: var(--body-font-size-sm, 0.875rem);
+}
+
+.product-list .pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+}
+
+.product-list .pagination-step {
+  margin: 0;
+}
+
+.product-list .pagination-step a[aria-disabled='true'] {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.product-list .pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1, 0.25rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.product-list .pagination-pages li {
+  margin: 0;
+}
+
+.product-list .pagination-page {
+  margin: 0;
+}
+
+.product-list .pagination-page a {
+  width: 2.5rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  min-height: 2.5rem;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.product-list .pagination-ellipsis {
+  min-width: 1.5rem;
+  color: var(--color-text-muted, #657780);
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .product-list .pagination {
+    flex-direction: column;
+    gap: var(--space-3, 0.75rem);
+  }
+
+  .product-list .pagination-page a {
+    width: 2.25rem;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    min-height: 2.25rem;
+  }
+
+  .product-list .pagination-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
