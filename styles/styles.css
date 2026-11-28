@@ -168,15 +168,20 @@ main > div {
 main > .section {
   margin: 40px 0;
 } */
- 
 
-main > .section > div {
-  max-width: 75rem;
-  margin: auto;
-  padding: 0.625rem 1.5rem;
+
+main>.section>div {
+  /* max-width: 75rem; */
+  /* margin: auto; */
+  padding: 0.625rem 2.5rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
-
-main > .section:first-of-type {
+.button-wrapper{
+  margin:0;
+}
+main>.section:first-of-type {
   margin-top: 0;
 }
 
@@ -203,11 +208,4 @@ td {
 th {
   background-color: #edf3f8;
   font-weight: 700;
-}
-
-
-@media (width >= 900px) {
-  main > .section > div {
-    padding: 0 2rem;
-  }
 }

@@ -1,3 +1,5 @@
+import { createButton } from '../button/button.js';
+import { createSelect } from '../form-control/form-control.js';
 const PRODUCT_TYPE = 'product';
 
 const SORT_OPTIONS = [
@@ -201,7 +203,7 @@ function getValueCount(
   return products.filter(
     (product) => (
       String(product[property] || '')
-        === String(value)
+      === String(value)
     ),
   ).length;
 }
@@ -245,7 +247,7 @@ async function fetchProducts(url) {
     return json.data.filter(
       (item) => (
         normalizeValue(item.type)
-          === PRODUCT_TYPE
+        === PRODUCT_TYPE
         && item.enabled !== 'false'
       ),
     );
@@ -379,10 +381,7 @@ function createFilterOption({
     text,
   );
 
-  if (
-    count !== undefined
-    && count !== null
-  ) {
+  if (count) {
     const countElement =
       document.createElement('span');
 
@@ -390,7 +389,7 @@ function createFilterOption({
       'product-filter-count';
 
     countElement.textContent =
-      `${count}`;
+      `(${count})`;
 
     wrapper.append(countElement);
   }
@@ -567,11 +566,9 @@ function matchesPrice(
  * }}
  */
 function createFilters(products) {
-  const filters =
-    document.createElement('form');
+  const filters = document.createElement('form');
 
-  filters.className =
-    'product-filters';
+  filters.className = 'product-filters';
 
   filters.setAttribute(
     'aria-label',
@@ -585,30 +582,43 @@ function createFilters(products) {
     },
   );
 
-  const header =
-    document.createElement('div');
+  const header = document.createElement('div');
 
-  header.className =
-    'product-filter-header';
+  header.className = 'product-filter-header';
 
-  const title =
-    document.createElement('h4');
+  const title = document.createElement('h6');
 
   title.textContent = 'Filters';
 
-  const clearButton =
-    document.createElement('button');
+  /*
+   * Reuse existing shared Button component.
+   */
+  const {
+    wrapper: clearButtonWrapper,
+    button: clearButton,
+  } = createButton({
+    href: '#',
+    title: 'Clear all filters',
+    label: 'Clear all',
+    color: 'secondary',
+    variant: 'text',
+    size: 'sm',
+  });
 
-  clearButton.type = 'button';
-  clearButton.className =
-    'product-filter-clear';
-
-  clearButton.textContent =
-    'Clear all';
+  /*
+   * This is an action, not real navigation.
+   * Prevent href="#" behavior.
+   */
+  clearButton.addEventListener(
+    'click',
+    (event) => {
+      event.preventDefault();
+    },
+  );
 
   header.append(
     title,
-    clearButton,
+    clearButtonWrapper,
   );
 
   filters.append(header);
@@ -621,7 +631,9 @@ function createFilters(products) {
         name: 'brand',
       },
     ),
+
     createPriceFilter(products),
+
     createPropertyFilter(
       products,
       {
@@ -629,6 +641,7 @@ function createFilters(products) {
         name: 'storage',
       },
     ),
+
     createPropertyFilter(
       products,
       {
@@ -636,6 +649,7 @@ function createFilters(products) {
         name: 'ram',
       },
     ),
+
     createPropertyFilter(
       products,
       {
@@ -643,6 +657,7 @@ function createFilters(products) {
         name: 'network',
       },
     ),
+
     createPropertyFilter(
       products,
       {
@@ -674,7 +689,7 @@ function createFilters(products) {
  */
 function createSort() {
   const wrapper =
-    document.createElement('label');
+    document.createElement('div');
 
   wrapper.className =
     'product-sort';
@@ -682,29 +697,24 @@ function createSort() {
   const text =
     document.createElement('span');
 
-  text.textContent = 'Sort by';
+  text.textContent =
+    'Sort by';
 
-  const select =
-    document.createElement('select');
-
-  select.setAttribute(
-    'aria-label',
-    'Sort products',
-  );
-
-  SORT_OPTIONS.forEach((option) => {
-    const element =
-      document.createElement('option');
-
-    element.value = option.value;
-    element.textContent = option.label;
-
-    select.append(element);
+  const {
+    wrapper: selectWrapper,
+    select,
+  } = createSelect({
+    id: 'product-sort',
+    name: 'product-sort',
+    ariaLabel: 'Sort products',
+    options: SORT_OPTIONS,
+    value: 'featured',
+    size: 'sm',
   });
 
   wrapper.append(
     text,
-    select,
+    selectWrapper,
   );
 
   return {
@@ -719,7 +729,7 @@ function createSort() {
  * @param {Object} product Product
  * @returns {HTMLImageElement|null}
  */
- const PRODUCT_FALLBACK_IMAGE =
+const PRODUCT_FALLBACK_IMAGE =
   '/assets/product-fallback.webp';
 
 function createProductImage(product) {
@@ -814,10 +824,9 @@ function createRating(product) {
 
   rating.setAttribute(
     'aria-label',
-    `${ratingValue} out of 5 stars${
-      product.reviews
-        ? `, ${product.reviews} reviews`
-        : ''
+    `${ratingValue} out of 5 stars${product.reviews
+      ? `, ${product.reviews} reviews`
+      : ''
     }`,
   );
 
@@ -1710,10 +1719,9 @@ export default async function decorate(block) {
       );
 
     count.textContent =
-      `${result.length} ${
-        result.length === 1
-          ? 'product'
-          : 'products'
+      `${result.length} ${result.length === 1
+        ? 'product'
+        : 'products'
       }`;
 
     renderProducts(
@@ -1850,8 +1858,7 @@ export default async function decorate(block) {
         SORT_OPTIONS[nextIndex].value;
 
       sortButton.textContent =
-        `Sort: ${
-          SORT_OPTIONS[nextIndex].label
+        `Sort: ${SORT_OPTIONS[nextIndex].label
         }`;
 
       update();

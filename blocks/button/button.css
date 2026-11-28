@@ -1,5 +1,5 @@
 .button {
-  --button-color: var(--color-primary, #1976d2);
+  --button-color: var(--color-info, #2563eb);
   --button-color-hover: var(--color-primary-hover, #1565c0);
   --button-color-active: var(--color-primary-active, #0d47a1);
   --button-on-color: var(--color-primary-text, #fff);

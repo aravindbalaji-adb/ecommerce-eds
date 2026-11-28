@@ -69,7 +69,7 @@
   width: var(--search-icon-size);
   height: var(--search-icon-size);
 
-  color: var(--field-placeholder, var(--color-text-muted, #657780));
+  color: var(--field-placeholder, var(--color-text-muted, #94969f));
 }
 
 .search-icon svg {

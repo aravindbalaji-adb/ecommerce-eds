@@ -15,7 +15,7 @@
 }
 
 .input::placeholder {
-  color: var(--field-placeholder, var(--color-text-muted, #657780));
+  color: var(--field-placeholder, var(--color-text-muted, #94969f));
   opacity: 1;
 }
 

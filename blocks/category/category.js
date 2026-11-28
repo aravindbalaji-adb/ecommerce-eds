@@ -1,5 +1,4 @@
-import { createOptimizedPicture } from "../../scripts/aem.js";
-import { createButton, applyButtonStyles } from "../button/button.js";
+import { createButton  } from "../button/button.js";
 
 const CATEGORY_TYPE = "category";
 

@@ -73,7 +73,7 @@
 }
 
 
-@media (max-width: 1199px) {
+@media (max-width: 1023px) {
 
   .header-wrapper #nav {
     display: flex;
